@@ -115,12 +115,25 @@ def ensure_data_file():
 async def login(request: Request):
     redirect_uri = OAUTH_REDIRECT_URI
     client = oauth.create_client(OAUTH_PROVIDER)
-    return await client.authorize_redirect(request, redirect_uri)
+    # Generate and store state in session explicitly
+    import secrets
+    state = secrets.token_urlsafe(32)
+    request.session["oauth_state"] = state
+    print(f"[LOGIN] Generated state: {state}")
+    return await client.authorize_redirect(request, redirect_uri, state=state)
 
 
 @app.get("/auth")
 async def auth(request: Request):
     client = oauth.create_client(OAUTH_PROVIDER)
+    
+    # Debug: print incoming state and stored state
+    incoming_state = request.query_params.get("state")
+    stored_state = request.session.get("oauth_state")
+    print(f"[AUTH] Incoming state: {incoming_state}")
+    print(f"[AUTH] Stored state: {stored_state}")
+    print(f"[AUTH] Session contents: {dict(request.session)}")
+    
     token = await client.authorize_access_token(request)
     # Fetch user/profile; provider-specific endpoints may differ
     if OAUTH_PROVIDER == "fluxer":

@@ -130,6 +130,26 @@ select:focus-visible {
   transform: translateY(1px);
 }
 
+.warning-banner {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 1px solid #f59e0b;
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+
+.warning-banner p {
+  margin: 0;
+  color: #92400e;
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.warning-banner strong {
+  color: #78350f;
+  font-weight: 700;
+}
+
 #status {
   margin-bottom: 12px;
 }

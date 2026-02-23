@@ -1,0 +1,16 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "Static dashboard for managing AutoMod rules and settings. Hosted independently from the backend.",
+  "license": "ISC",
+  "author": "UncleMelo",
+  "scripts": {
+    "dev": "parcel public/index.html --port 3000 --dist-dir dist",
+    "start": "parcel public/index.html --port 3000 --dist-dir dist",
+    "build": "parcel build public/index.html --public-url ./ --dist-dir dist",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "parcel": "^2.16.4"
+  }
+}

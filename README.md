@@ -132,7 +132,6 @@ See backend/README.md for nginx + systemd config.
 The frontend is a single `index.html` — deploy anywhere:
 
 - **GitHub Pages**: Push to repo, enable in settings  
-- **Vercel**: Deploy `frontend/` directory  
 - **Netlify**: Connect repo  
 - **AWS S3 + CloudFront**: Upload files  
 - **Cloudflare Pages**: Connect repo  

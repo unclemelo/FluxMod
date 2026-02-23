@@ -1,11 +1,11 @@
 # AutoMod Bot
 
-Discord bot component for AutoMod. Handles moderation commands and event listening.
+Fluxer bot component for AutoMod. Handles moderation commands and event listening.
 
 ## Structure
 
 - `bot.py` — bot entrypoint and initialization
-- `cogs/` — Discord Cogs (command groups, event handlers)
+- `cogs/` — Fluxer Cogs (command groups, event handlers)
 - `utils/` — shared utility modules (engine, manager, models, dashboard)
 - `docs/` — architecture and developer reference
 
@@ -27,7 +27,7 @@ pip install -r requirements.txt
 Set environment variables (create `.env` in this directory):
 
 ```env
-DISCORD_TOKEN=your_bot_token_here
+FLUXER_TOKEN=your_bot_token_here
 BACKEND_API_URL=http://localhost:8000
 ```
 
@@ -47,14 +47,14 @@ python bot.py
 
 1. Clone repo, navigate to `bot/` directory
 2. Create venv and install deps
-3. Configure `.env` with Discord token and backend URL
+3. Configure `.env` with Fluxer token and backend URL
 4. Run with systemd service or pm2 supervisor
 
 Example systemd service (`/etc/systemd/system/automod-bot.service`):
 
 ```ini
 [Unit]
-Description=AutoMod Discord Bot
+Description=AutoMod Fluxer Bot
 After=network.target
 
 [Service]

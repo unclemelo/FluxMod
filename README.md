@@ -1,11 +1,11 @@
 
 # AutoMod
 
-A modular Discord auto-moderation system with independent bot, backend API, and web dashboard.
+A modular Fluxer auto-moderation system with independent bot, backend API, and web dashboard.
 
 [![Netlify Status](https://api.netlify.com/api/v1/badges/54357230-e98a-4ee1-890e-8fe059637adb/deploy-status)](https://app.netlify.com/projects/fluxmod/deploys)
 
-- **Bot**: Discord bot that enforces rules in real-time  
+- **Bot**: Fluxer bot that enforces rules in real-time  
 - **Backend**: FastAPI REST API with Fluxer OAuth for rule management  
 - **Frontend**: Lightweight web dashboard for managing rules
 
@@ -24,9 +24,9 @@ Project Structure
 
 ```
 AutoMod/
-├── bot/                  # Discord bot (runs on server)
+├── bot/                  # Fluxer bot (runs on server)
 │   ├── bot.py
-│   ├── cogs/            # Discord command groups
+│   ├── cogs/            # Fluxer command groups
 │   ├── utils/           # Shared engine, models, manager
 │   ├── docs/            # Architecture docs
 │   ├── requirements.txt
@@ -94,7 +94,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 # Configure
-echo "DISCORD_TOKEN=your_token" > .env
+echo "FLUXER_TOKEN=your_token" > .env
 echo "BACKEND_API_URL=http://localhost:8000" >> .env
 
 # Run with systemd (see bot/README.md for full config)
@@ -132,7 +132,6 @@ See backend/README.md for nginx + systemd config.
 The frontend is a single `index.html` — deploy anywhere:
 
 - **GitHub Pages**: Push to repo, enable in settings  
-- **Vercel**: Deploy `frontend/` directory  
 - **Netlify**: Connect repo  
 - **AWS S3 + CloudFront**: Upload files  
 - **Cloudflare Pages**: Connect repo  
@@ -145,7 +144,7 @@ Update `allow_origins` in `backend/api.py` if frontend is on a different domain.
 Architecture
 ------------
 
-- **Bot** fetches rules from backend API and enforces them in Discord/Fluxer
+- **Bot** fetches rules from backend API and enforces them in Fluxer
 - **Backend** manages rules, guilds, and user sessions; handles OAuth
 - **Frontend** calls backend API; users login via Fluxer OAuth
 
@@ -161,7 +160,7 @@ Configuration
 -------------
 
 See individual component READMEs:
-- `bot/README.md` — Discord token, backend URL
+- `bot/README.md` — Fluxer token, backend URL
 - `backend/README.md` — Fluxer OAuth, session secret, database setup
 - `frontend/README.md` — Backend API URL (configured at runtime)
 
@@ -170,7 +169,7 @@ Development
 
 - Modify rules: `bot/utils/automod_engine.py` and `backend/api.py`
 - Update models: `bot/utils/automod_models.py`
-- Add Discord commands: `bot/cogs/automod.py`
+- Add Fluxer commands: `bot/cogs/automod.py`
 - Improve dashboard: `frontend/index.html`
 
 Run tests and linters before submitting PRs.

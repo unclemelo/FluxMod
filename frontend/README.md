@@ -4,7 +4,7 @@ Static dashboard for managing AutoMod rules and settings. Hosted independently f
 
 ## Features
 
-- OAuth login (Fluxer or Discord)
+- OAuth login (Fluxer)
 - View guilds and rules
 - Create, update, delete rules
 - Simple, lightweight UI

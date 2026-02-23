@@ -4,3 +4,4 @@ authlib
 python-dotenv
 itsdangerous
 httpx
+gunicorn

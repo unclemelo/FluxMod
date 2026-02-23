@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AutoMod — Dashboard</title>
+  <style>
+    body{font-family:Inter,Segoe UI,Arial,sans-serif;margin:0;background:#f6f8fa;color:#111}
+    header{background:#0b5cff;color:#fff;padding:16px}
+    .container{max-width:900px;margin:28px auto;padding:16px;background:#fff;border-radius:8px;box-shadow:0 6px 18px rgba(15,23,42,0.06)}
+    button{background:#0b5cff;color:#fff;border:0;padding:8px 12px;border-radius:6px;cursor:pointer}
+    .muted{color:#666}
+    .guild{padding:8px;border-bottom:1px solid #eee}
+    label{display:block;margin-top:8px}
+    input,select{padding:8px;width:100%;box-sizing:border-box;margin-top:4px}
+    form{margin-top:12px}
+    pre{background:#f3f4f6;padding:12px;border-radius:6px;max-height:400px;overflow-y:auto}
+  </style>
+</head>
+<body>
+  <header>
+    <div style="max-width:900px;margin:0 auto;display:flex;align-items:center;justify-content:space-between">
+      <h1 style="font-size:18px;margin:0">AutoMod — Dashboard</h1>
+      <div id="auth-area"></div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="status"><p class="muted">Checking authentication...</p></section>
+
+    <section id="dashboard" style="display:none">
+      <h2>Guilds</h2>
+      <div id="guilds"></div>
+
+      <h3>Create Rule</h3>
+      <form id="create-rule-form">
+        <label>Guild
+          <select id="guild-select"></select>
+        </label>
+        <label>Rule name<input id="rule-name" required /></label>
+        <label>Pattern<input id="rule-pattern" required /></label>
+        <label>Action<input id="rule-action" required /></label>
+        <label>Threshold<input id="rule-threshold" type="number" value="1" min="1" /></label>
+        <label><input id="rule-enabled" type="checkbox" checked /> Enabled</label>
+        <button type="submit">Create</button>
+      </form>
+
+      <h3>Raw API</h3>
+      <pre id="raw"></pre>
+    </section>
+  </main>
+
+  <script>
+    // Config: set BACKEND_URL to your backend API base (e.g. http://localhost:8000)
+    const BACKEND_URL = (typeof window !== 'undefined' && window.BACKEND_URL) || localStorage.getItem('backendUrl') || prompt('Enter backend URL (e.g. http://localhost:8000):', 'http://localhost:8000')
+    if(BACKEND_URL) localStorage.setItem('backendUrl', BACKEND_URL)
+
+    async function apiCall(endpoint, options = {}) {
+      const url = BACKEND_URL + endpoint
+      const res = await fetch(url, {
+        credentials: 'include',
+        ...options
+      })
+      if (!res.ok && res.status !== 401) {
+        const text = await res.text()
+        throw new Error(`${res.status}: ${text}`)
+      }
+      return res
+    }
+
+    async function checkAuth(){
+      const statusEl = document.getElementById('status')
+      try{
+        const meRes = await apiCall('/api/me')
+        if(meRes.status === 401){
+          showLoggedOut()
+          statusEl.innerHTML = '<p class="muted">Not signed in — click login to continue.</p>'
+          return
+        }
+        
+        const res = await apiCall('/api/guilds')
+        const guilds = await res.json()
+        showLoggedIn()
+        renderGuilds(guilds)
+      }catch(err){
+        statusEl.innerHTML = '<p class="muted">Error: '+err.message+'</p>'
+        console.error(err)
+      }
+    }
+
+    function showLoggedOut(){
+      document.getElementById('auth-area').innerHTML = '<button id="login">Login</button>'
+      document.getElementById('login').onclick = ()=> window.location.href= BACKEND_URL + '/login'
+      document.getElementById('dashboard').style.display = 'none'
+    }
+
+    function showLoggedIn(){
+      document.getElementById('auth-area').innerHTML = '<button id="logout">Logout</button>'
+      document.getElementById('logout').onclick = async ()=>{ await apiCall('/logout'); location.reload() }
+      document.getElementById('dashboard').style.display = 'block'
+    }
+
+    function renderGuilds(guilds){
+      const el = document.getElementById('guilds')
+      el.innerHTML = ''
+      const select = document.getElementById('guild-select')
+      select.innerHTML = ''
+      for(const g of guilds){
+        const d = document.createElement('div'); d.className='guild'; d.textContent = `${g.name || g.id} — ${g.rule_count} rules`;
+        el.appendChild(d)
+        const opt = document.createElement('option'); opt.value = g.id; opt.textContent = g.name || g.id; select.appendChild(opt)
+      }
+      document.getElementById('raw').textContent = JSON.stringify(guilds, null, 2)
+    }
+
+    document.getElementById('create-rule-form').addEventListener('submit', async (ev)=>{
+      ev.preventDefault()
+      const guild = document.getElementById('guild-select').value
+      const body = {
+        name: document.getElementById('rule-name').value,
+        pattern: document.getElementById('rule-pattern').value,
+        action: document.getElementById('rule-action').value,
+        threshold: parseInt(document.getElementById('rule-threshold').value,10)||1,
+        enabled: document.getElementById('rule-enabled').checked
+      }
+      try{
+        const res = await apiCall(`/api/guilds/${encodeURIComponent(guild)}/rules`, {
+          method: 'POST',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify(body)
+        })
+        if(res.status === 201){
+          alert('Rule created')
+          checkAuth()
+        }else if(res.status === 401){
+          alert('Not authorized — login required')
+        }else{
+          const text = await res.text(); alert('Error: '+res.status+' '+text)
+        }
+      }catch(e){alert('Request failed: '+e.message)}
+    })
+
+    checkAuth()
+  </script>
+</body>
+</html>

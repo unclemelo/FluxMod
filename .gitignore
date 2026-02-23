@@ -1,0 +1,66 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+.venv/
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+bot/.venv/
+backend/.venv/
+
+# Environment variables (NEVER commit)
+.env
+.env.local
+.env.*.local
+backend/.env
+bot/.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS
+Thumbs.db
+
+# Project specific
+*.db
+*.sqlite
+*.sqlite3
+data.json
+backend/data.json
+*.log
+logs/
+
+# Frontend (if using Node)
+node_modules/
+.next/
+out/

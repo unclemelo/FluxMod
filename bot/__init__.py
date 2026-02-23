@@ -1,0 +1,1 @@
+"""AutoMod Discord Bot Package."""

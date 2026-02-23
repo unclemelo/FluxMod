@@ -1,0 +1,130 @@
+# AutoMod Backend API
+
+FastAPI-based REST API for AutoMod rule management with Fluxer OAuth authentication.
+
+## Endpoints
+
+- `GET /api/me` — get current user
+- `GET /api/guilds` — list guilds (authenticated)
+- `GET /api/guilds/{guild_id}/rules` — list rules for guild (authenticated)
+- `POST /api/guilds/{guild_id}/rules` — create rule (authenticated)
+- `PUT /api/rules/{rule_id}` — update rule (authenticated)
+- `DELETE /api/rules/{rule_id}` — delete rule (authenticated)
+- `GET /login` — OAuth redirect
+- `GET /auth` — OAuth callback
+- `GET /logout` — clear session
+
+## Local Setup
+
+```bash
+python -m venv .venv
+# Windows PowerShell
+.\.venv\Scripts\Activate.ps1
+# Linux/Mac
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+Create `.env` in this directory:
+
+```env
+OAUTH_PROVIDER=fluxer
+FLUXER_CLIENT_ID=your_client_id
+FLUXER_CLIENT_SECRET=your_client_secret
+FLUXER_AUTHORIZE_URL=https://api.fluxer.app/v1/oauth2/authorize
+FLUXER_TOKEN_URL=https://api.fluxer.app/v1/oauth2/token
+FLUXER_API_BASE_URL=https://api.fluxer.app/v1
+FLUXER_USER_ENDPOINT=https://api.fluxer.app/v1/oauth2/userinfo
+SESSION_SECRET=your_secure_random_secret
+OAUTH_REDIRECT_URI=http://127.0.0.1:8000/auth
+```
+
+Start the server:
+
+```bash
+uvicorn api:app --reload --host 127.0.0.1 --port 8000
+```
+
+Visit http://127.0.0.1:8000/docs for interactive API docs.
+
+## Data Storage
+
+Currently uses JSON file (`data.json`) for persistence. For production, replace with:
+- PostgreSQL + SQLAlchemy
+- MongoDB
+- Any other database
+
+## Deployment (Ubuntu)
+
+1. Clone repo, navigate to `backend/` directory
+2. Create venv and install deps
+3. Configure `.env` with Fluxer credentials
+4. Run with gunicorn + nginx:
+
+```bash
+pip install gunicorn
+gunicorn -w 4 -b 0.0.0.0:8000 api:app
+```
+
+Nginx config example:
+
+```nginx
+server {
+    listen 80;
+    server_name api.example.com;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+```
+
+Or use systemd service:
+
+```ini
+[Unit]
+Description=AutoMod Backend API
+After=network.target
+
+[Service]
+Type=simple
+User=automod
+WorkingDirectory=/home/automod/AutoMod/backend
+Environment="PYTHONUNBUFFERED=1"
+ExecStart=/home/automod/AutoMod/backend/.venv/bin/gunicorn -w 4 -b 0.0.0.0:8000 api:app
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable and start:
+
+```bash
+sudo systemctl daemon-reload
+sudo systemctl enable automod-backend
+sudo systemctl start automod-backend
+```
+
+## CORS
+
+To allow requests from frontend hosted elsewhere, add to `api.py`:
+
+```python
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["https://example.com"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+```
+
+Update `allow_origins` with your frontend domain.

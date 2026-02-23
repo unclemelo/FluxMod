@@ -3,6 +3,8 @@
 
 A modular Discord auto-moderation system with independent bot, backend API, and web dashboard.
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/54357230-e98a-4ee1-890e-8fe059637adb/deploy-status)](https://app.netlify.com/projects/fluxmod/deploys)
+
 - **Bot**: Discord bot that enforces rules in real-time  
 - **Backend**: FastAPI REST API with Fluxer OAuth for rule management  
 - **Frontend**: Lightweight web dashboard for managing rules

@@ -13,7 +13,7 @@ export function getBackendUrl() {
 
   if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
     // In production (e.g., Netlify), assume backend is on Render at standard URL
-    backendUrl = "https://automod-backend.onrender.com";
+    backendUrl = "https://fluxmod.onrender.comm";
   }
 
   // Allow prompt override only in development

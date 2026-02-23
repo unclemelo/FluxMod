@@ -134,7 +134,38 @@ async def auth(request: Request):
     print(f"[AUTH] Stored state: {stored_state}")
     print(f"[AUTH] Session contents: {dict(request.session)}")
     
-    token = await client.authorize_access_token(request)
+    try:
+        # Attempt token exchange - authlib will validate state
+        token = await client.authorize_access_token(request)
+    except Exception as e:
+        print(f"[AUTH] authorize_access_token failed: {e}")
+        # Try manual token exchange if state validation fails
+        code = request.query_params.get("code")
+        state = request.query_params.get("state")
+        
+        if not code:
+            raise HTTPException(status_code=400, detail="Missing authorization code")
+        
+        print(f"[AUTH] Attempting manual token exchange with code={code}, state={state}")
+        
+        # Manually exchange code for token (bypasses state validation issues)
+        import httpx
+        async with httpx.AsyncClient() as http_client:
+            token_response = await http_client.post(
+                os.getenv("FLUXER_TOKEN_URL"),
+                data={
+                    "grant_type": "authorization_code",
+                    "code": code,
+                    "redirect_uri": OAUTH_REDIRECT_URI,
+                    "client_id": os.getenv("FLUXER_CLIENT_ID"),
+                    "client_secret": os.getenv("FLUXER_CLIENT_SECRET"),
+                }
+            )
+            if token_response.status_code != 200:
+                raise HTTPException(status_code=500, detail=f"Token exchange failed: {token_response.text}")
+            token = token_response.json()
+            print(f"[AUTH] Manual token exchange succeeded: {token}")
+    
     # Fetch user/profile; provider-specific endpoints may differ
     if OAUTH_PROVIDER == "fluxer":
         user_endpoint = os.getenv("FLUXER_USER_ENDPOINT")

@@ -1,5 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.responses import RedirectResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 from typing import List
 import uuid
@@ -16,14 +17,32 @@ DATA_FILE = ROOT / "data.json"
 # Load .env from the backend directory
 load_dotenv(dotenv_path=str(ROOT / ".env"))
 
+app = FastAPI(title="AutoMod Backend API")
+
+# Add CORS middleware to allow frontend requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:3000",           # Local dev
+        "https://fluxmod.netlify.app",     # Production frontend
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 # OAuth / session configuration
 SESSION_SECRET = os.getenv("SESSION_SECRET") or "melobytesarebestbytes"
 OAUTH_REDIRECT_URI = os.getenv("OAUTH_REDIRECT_URI") or "http://127.0.0.1:8000/auth"
+IS_PRODUCTION = os.getenv("ENVIRONMENT") == "production"
 
-app = FastAPI(title="AutoMod Backend API")
-
-# Add session middleware
-app.add_middleware(SessionMiddleware, secret_key=SESSION_SECRET)
+# Add session middleware with cross-site cookie support for OAuth
+app.add_middleware(
+    SessionMiddleware, 
+    secret_key=SESSION_SECRET,
+    same_site="none",
+    https_only=IS_PRODUCTION,  # True for production (HTTPS), False for local dev
+)
 
 OAUTH_PROVIDER = os.getenv("OAUTH_PROVIDER", "fluxer").lower()
 oauth = OAuth()

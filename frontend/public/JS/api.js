@@ -12,8 +12,9 @@ export function getBackendUrl() {
   let backendUrl = "http://localhost:8000"; // dev default
 
   if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
-    // In production (e.g., Netlify), assume backend is on Render at standard URL
-    backendUrl = "https://fluxmod.onrender.com";
+    // In production on Render, backend is same origin
+    // Use current origin (works whether frontend is on same service or different subdomain)
+    backendUrl = window.location.origin.replace('fluxmod-frontend', 'fluxmod');
   }
 
   // Allow prompt override only in development

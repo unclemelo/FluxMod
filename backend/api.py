@@ -37,6 +37,7 @@ OAUTH_REDIRECT_URI = os.getenv("OAUTH_REDIRECT_URI") or "http://127.0.0.1:8000/a
 IS_PRODUCTION = os.getenv("ENVIRONMENT") == "production"
 SESSION_SAME_SITE: Literal["lax", "strict", "none"] = os.getenv("SESSION_SAME_SITE", "none" if IS_PRODUCTION else "lax").lower() # type: ignore
 SESSION_HTTPS_ONLY = os.getenv("SESSION_HTTPS_ONLY", str(IS_PRODUCTION)).lower() == "true"
+FRONTEND_URL = os.getenv("FRONTEND_URL") or "http://localhost:3000"
 
 # Add session middleware.
 # - Production cross-site OAuth requires SameSite=None + Secure cookies.
@@ -135,8 +136,8 @@ async def auth(request: Request):
         profile = resp.json()
         request.session["user"] = {"id": profile.get("id"), "username": profile.get("username"), "discriminator": profile.get("discriminator")}
     
-    # Return redirect response which will include session cookie
-    response = RedirectResponse(url="/", status_code=302)
+    # Redirect to frontend with the session cookie included
+    response = RedirectResponse(url=FRONTEND_URL, status_code=302)
     return response
 
 

@@ -1,12 +1,12 @@
 :root {
-  --bg: #f3f6fb;
-  --surface: #ffffff;
-  --surface-muted: #f8fafc;
-  --text: #0f172a;
-  --text-muted: #64748b;
-  --primary: #0b5cff;
-  --primary-dark: #0a4cd3;
-  --border: #e2e8f0;
+  --bg: #0e1117;
+  --surface: #1e1e2f;
+  --surface-muted: #2a2a3f;
+  --text: #e6e8eb;
+  --text-muted: #9aa4b2;
+  --primary: #0539a1;
+  --primary-dark: #05318a;
+  --border: #3f4041;
   --ring: rgba(11, 92, 255, 0.2);
   --shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
 }
@@ -18,7 +18,7 @@
 body {
   margin: 0;
   font-family: Inter, "Segoe UI", Arial, sans-serif;
-  background: radial-gradient(circle at top right, #eef4ff 0%, var(--bg) 45%);
+  background: var(--bg);
   color: var(--text);
 }
 

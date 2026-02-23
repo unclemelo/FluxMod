@@ -2,7 +2,7 @@ from fastapi import FastAPI, HTTPException, Request, Depends
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List, Literal
 import uuid
 import json
 import pathlib
@@ -35,13 +35,17 @@ app.add_middleware(
 SESSION_SECRET = os.getenv("SESSION_SECRET") or "melobytesarebestbytes"
 OAUTH_REDIRECT_URI = os.getenv("OAUTH_REDIRECT_URI") or "http://127.0.0.1:8000/auth"
 IS_PRODUCTION = os.getenv("ENVIRONMENT") == "production"
+SESSION_SAME_SITE: Literal["lax", "strict", "none"] = os.getenv("SESSION_SAME_SITE", "none" if IS_PRODUCTION else "lax").lower() # type: ignore
+SESSION_HTTPS_ONLY = os.getenv("SESSION_HTTPS_ONLY", str(IS_PRODUCTION)).lower() == "true"
 
-# Add session middleware with cross-site cookie support for OAuth
+# Add session middleware.
+# - Production cross-site OAuth requires SameSite=None + Secure cookies.
+# - Local HTTP development works best with SameSite=Lax and non-secure cookies.
 app.add_middleware(
     SessionMiddleware, 
     secret_key=SESSION_SECRET,
-    same_site="none",
-    https_only=IS_PRODUCTION,  # True for production (HTTPS), False for local dev
+    same_site=SESSION_SAME_SITE,
+    https_only=SESSION_HTTPS_ONLY,
 )
 
 OAUTH_PROVIDER = os.getenv("OAUTH_PROVIDER", "fluxer").lower()
@@ -140,6 +144,11 @@ async def auth(request: Request):
 def logout(request: Request):
     request.session.pop("user", None)
     return {"detail": "logged out"}
+
+
+@app.get("/healthz")
+def healthz():
+    return {"status": "ok"}
 
 
 @app.get("/api/me")

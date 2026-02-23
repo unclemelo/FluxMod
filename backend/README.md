@@ -37,6 +37,18 @@ FLUXER_API_BASE_URL=https://api.fluxer.app/v1
 FLUXER_USER_ENDPOINT=https://api.fluxer.app/v1/oauth2/userinfo
 SESSION_SECRET=your_secure_random_secret
 OAUTH_REDIRECT_URI=http://127.0.0.1:8000/auth
+ENVIRONMENT=development
+# Optional overrides:
+# SESSION_SAME_SITE=lax
+# SESSION_HTTPS_ONLY=false
+```
+
+For production (HTTPS + cross-site frontend), use:
+
+```env
+ENVIRONMENT=production
+SESSION_SAME_SITE=none
+SESSION_HTTPS_ONLY=true
 ```
 
 Start the server:
@@ -46,6 +58,46 @@ uvicorn api:app --reload --host 127.0.0.1 --port 8000
 ```
 
 Visit http://127.0.0.1:8000/docs for interactive API docs.
+
+## Deployment (Render)
+
+This repository includes a Render blueprint at `render.yaml` (repo root).
+
+### Option A: Blueprint deploy (recommended)
+
+1. Push this repo to GitHub.
+2. In Render, choose **New +** → **Blueprint**.
+3. Select this repository.
+4. Render reads `render.yaml` and creates `automod-backend`.
+5. In the service environment settings, fill these required secrets:
+    - `FLUXER_CLIENT_ID`
+    - `FLUXER_CLIENT_SECRET`
+    - `OAUTH_REDIRECT_URI` = `https://<your-render-service>.onrender.com/auth`
+
+### Option B: Manual web service
+
+- Root Directory: `backend`
+- Build Command: `pip install -r requirements.txt`
+- Start Command: `gunicorn -k uvicorn.workers.UvicornWorker api:app --bind 0.0.0.0:$PORT`
+
+Required environment values:
+
+```env
+OAUTH_PROVIDER=fluxer
+FLUXER_CLIENT_ID=<from Fluxer>
+FLUXER_CLIENT_SECRET=<from Fluxer>
+FLUXER_AUTHORIZE_URL=https://api.fluxer.app/v1/oauth2/authorize
+FLUXER_TOKEN_URL=https://api.fluxer.app/v1/oauth2/token
+FLUXER_API_BASE_URL=https://api.fluxer.app/v1
+FLUXER_USER_ENDPOINT=https://api.fluxer.app/v1/oauth2/userinfo
+SESSION_SECRET=<long-random-string>
+ENVIRONMENT=production
+SESSION_SAME_SITE=none
+SESSION_HTTPS_ONLY=true
+OAUTH_REDIRECT_URI=https://<your-render-service>.onrender.com/auth
+```
+
+After deploy, update your Fluxer OAuth app callback URL to match `OAUTH_REDIRECT_URI`.
 
 ## Data Storage
 

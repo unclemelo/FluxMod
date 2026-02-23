@@ -37,6 +37,7 @@ FLUXER_API_BASE_URL=https://api.fluxer.app/v1
 FLUXER_USER_ENDPOINT=https://api.fluxer.app/v1/oauth2/userinfo
 SESSION_SECRET=your_secure_random_secret
 OAUTH_REDIRECT_URI=http://127.0.0.1:8000/auth
+FRONTEND_URL=http://localhost:3000
 ENVIRONMENT=development
 # Optional overrides:
 # SESSION_SAME_SITE=lax
@@ -48,6 +49,9 @@ For production (HTTPS + cross-site frontend), use:
 ```env
 ENVIRONMENT=production
 SESSION_SAME_SITE=none
+SESSION_HTTPS_ONLY=true
+FRONTEND_URL=https://fluxmod.netlify.app
+```
 SESSION_HTTPS_ONLY=true
 ```
 
@@ -95,6 +99,7 @@ ENVIRONMENT=production
 SESSION_SAME_SITE=none
 SESSION_HTTPS_ONLY=true
 OAUTH_REDIRECT_URI=https://<your-render-service>.onrender.com/auth
+FRONTEND_URL=https://fluxmod.netlify.app
 ```
 
 After deploy, update your Fluxer OAuth app callback URL to match `OAUTH_REDIRECT_URI`.

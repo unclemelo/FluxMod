@@ -17,10 +17,11 @@ async function checkAuth() {
       return;
     }
 
+    const user = await meResponse.json();
     const guildsResponse = await apiCall(backendUrl, "/api/guilds");
     const guilds = await guildsResponse.json();
 
-    showLoggedIn(async () => {
+    showLoggedIn(user, async () => {
       await apiCall(backendUrl, "/logout");
       location.reload();
     });

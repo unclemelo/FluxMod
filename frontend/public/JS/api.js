@@ -1,19 +1,33 @@
 export function getBackendUrl() {
-  const existingUrl =
+  // Priority: window.BACKEND_URL > localStorage > environment > sensible defaults
+  const existing =
     (typeof window !== "undefined" && window.BACKEND_URL) ||
     localStorage.getItem("backendUrl");
 
-  const backendUrl =
-    existingUrl ||
-    prompt(
-      "Enter backend URL (e.g. http://localhost:8000):",
-      "http://localhost:8000"
-    );
-
-  if (backendUrl) {
-    localStorage.setItem("backendUrl", backendUrl);
+  if (existing) {
+    return existing;
   }
 
+  // Auto-detect backend based on current environment
+  let backendUrl = "http://localhost:8000"; // dev default
+
+  if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
+    // In production (e.g., Netlify), assume backend is on Render at standard URL
+    backendUrl = "https://fluxmod.onrender.comm";
+  }
+
+  // Allow prompt override only in development
+  if (typeof window !== "undefined" && window.location.hostname === "localhost") {
+    const promptUrl = prompt(
+      "Enter backend URL (or press Cancel for http://localhost:8000):",
+      backendUrl
+    );
+    if (promptUrl) {
+      backendUrl = promptUrl;
+    }
+  }
+
+  localStorage.setItem("backendUrl", backendUrl);
   return backendUrl;
 }
 

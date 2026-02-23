@@ -23,8 +23,8 @@ app = FastAPI(title="AutoMod Backend API")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000",           # Local dev
-        "https://fluxmod.netlify.app",     # Production frontend
+        "http://localhost:3000",                      # Local dev
+        "https://fluxmod-frontend.onrender.com",      # Production frontend on Render
     ],
     allow_credentials=True,
     allow_methods=["*"],

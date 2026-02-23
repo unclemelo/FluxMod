@@ -97,6 +97,39 @@ select:focus-visible {
   outline-offset: 1px;
 }
 
+#auth-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-info {
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.auth-btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 8px 16px;
+  background: rgba(255, 255, 255, 0.25);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.05s ease;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+}
+
+.auth-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.auth-btn:active {
+  transform: translateY(1px);
+}
+
 #status {
   margin-bottom: 12px;
 }

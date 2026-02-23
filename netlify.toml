@@ -1,0 +1,12 @@
+[build]
+  # Directory to publish (e.g., "dist", "build", "public")
+  publish = "frontend"
+  
+  # Command to build your project
+  command = "npm run build"
+
+# Optional: Redirects (e.g., for Single Page Apps)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

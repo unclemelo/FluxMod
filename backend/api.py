@@ -59,6 +59,7 @@ if OAUTH_PROVIDER == "fluxer":
     FLUXER_AUTHORIZE_URL = os.getenv("FLUXER_AUTHORIZE_URL")
     FLUXER_TOKEN_URL = os.getenv("FLUXER_TOKEN_URL")
     FLUXER_API_BASE_URL = os.getenv("FLUXER_API_BASE_URL")
+    FLUXER_SCOPE = os.getenv("FLUXER_SCOPE", "identify guilds")
     oauth.register(
         name="fluxer",
         client_id=FLUXER_CLIENT_ID,
@@ -66,7 +67,7 @@ if OAUTH_PROVIDER == "fluxer":
         access_token_url=FLUXER_TOKEN_URL,
         authorize_url=FLUXER_AUTHORIZE_URL,
         api_base_url=FLUXER_API_BASE_URL,
-        client_kwargs={"scope": os.getenv("FLUXER_SCOPE", "openid profile email")},
+        scope=FLUXER_SCOPE,  # Set scope directly, not in client_kwargs
     )
 
 def require_user(request: Request):
@@ -120,7 +121,9 @@ async def login(request: Request):
     state = secrets.token_urlsafe(32)
     request.session["oauth_state"] = state
     print(f"[LOGIN] Generated state: {state}")
-    return await client.authorize_redirect(request, redirect_uri, state=state)
+    print(f"[LOGIN] redirect_uri: {redirect_uri}")
+    print(f"[LOGIN] Client config: client_id={client.client_id}, scope={FLUXER_SCOPE}")
+    return await client.authorize_redirect(request, redirect_uri, state=state, scope=FLUXER_SCOPE)
 
 
 @app.get("/auth")

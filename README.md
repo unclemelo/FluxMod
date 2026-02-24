@@ -38,7 +38,8 @@ AutoMod/
 │   ├── requirements.txt
 │   └── README.md
 ├── frontend/            # Web dashboard (self-hosted or cloud)
-│   ├── index.html      # Standalone HTML app
+│   ├── public/index.html      # Landing/login page
+│   ├── public/dashboard.html  # Dashboard page
 │   └── README.md
 └── README.md           # This file
 ```
@@ -129,7 +130,7 @@ See backend/README.md for nginx + systemd config.
 
 ### Frontend (Any Static Host)
 
-The frontend is a single `index.html` — deploy anywhere:
+The frontend includes a landing page (`index.html`) and a dashboard page (`dashboard.html`) — deploy anywhere:
 
 - **GitHub Pages**: Push to repo, enable in settings  
 - **Netlify**: Connect repo  

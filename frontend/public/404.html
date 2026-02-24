@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FluxMod • Landing</title>
+    <title>FluxMod • Page Not Found</title>
     <link rel="stylesheet" href="./Styles/styles.css" />
   </head>
   <body>
@@ -12,7 +12,7 @@
         <a class="brand" href="./index.html">FluxMod</a>
 
         <nav class="nav-links" aria-label="Main navigation">
-          <a class="nav-link active" href="./index.html">Home</a>
+          <a class="nav-link" href="./index.html">Home</a>
           <a class="nav-link nav-dashboard" href="./dashboard.html">Dashboard</a>
           <a class="nav-link" href="./info.html">Info</a>
           <a class="nav-link" href="./contributors.html">Contributors</a>
@@ -23,19 +23,17 @@
     </header>
 
     <main class="container landing-main">
-      <section class="stat-card hero-stat">
-        <p><strong>Protected Guilds</strong> <span id="protected-guilds-count">...</span></p>
+      <section class="page-card hero-stat">
+        <p><strong>404</strong> <span id="protected-guilds-count">Page Not Found</span></p>
+        <p class="muted">The page you are looking for does not exist.</p>
       </section>
 
-      <section class="warning-banner">
-        <p><strong>⚠️ Development Notice:</strong> You can log in, but sessions may not persist while the bot database and dashboard integration are being built. This is expected behavior during development.</p>
-      </section>
-
-      <section id="status">
-        <p class="muted">Checking authentication...</p>
+      <section class="page-card" style="width: min(860px, 100%); text-align: center;">
+        <p class="muted">Try going back to the homepage.</p>
+        <p><a class="nav-link active" href="./index.html">Go Home</a></p>
       </section>
     </main>
 
-    <script type="module" src="./JS/landing.js"></script>
+    <script type="module" src="./JS/nav-auth.js"></script>
   </body>
 </html>

@@ -8,7 +8,8 @@ from dotenv import load_dotenv
 
 
 load_dotenv()
-TOKEN = os.getenv("TOKEN") or os.getenv("FLUXER_TOKEN")
+raw_token = os.getenv("TOKEN") or os.getenv("FLUXER_TOKEN")
+TOKEN = raw_token.strip() if raw_token else None
 BOT_ROOT = pathlib.Path(__file__).parent
 
 intents = fluxer.Intents.default()
@@ -52,6 +53,10 @@ async def main():
     except Exception as e:
         log(f"Critical error loading cogs: {e}", "critical")
 
+    if not TOKEN:
+        log("Missing bot token. Set TOKEN or FLUXER_TOKEN.", "critical")
+        return
+
     try:
         log(f"Starting...", "info")
         await client.start(TOKEN)
@@ -59,6 +64,12 @@ async def main():
         log("Manual shutdown requested (Ctrl+C)", "warn")
         await client.close()
     except Exception as e:
+        error_text = str(e)
+        if "403" in error_text and "Forbidden" in error_text:
+            log(
+                "Bot token rejected (403 Forbidden). Use a valid bot token (not OAuth client secret/access token) and re-check Render env FLUXER_TOKEN.",
+                "critical",
+            )
         log(f"Failed to start bot: {e}", "critical")
 
 

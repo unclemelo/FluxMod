@@ -7,6 +7,8 @@ import uuid
 import json
 import pathlib
 import os
+import subprocess
+import sys
 from starlette.middleware.sessions import SessionMiddleware
 from authlib.integrations.starlette_client import OAuth
 from dotenv import load_dotenv
@@ -51,6 +53,7 @@ app.add_middleware(
 
 OAUTH_PROVIDER = os.getenv("OAUTH_PROVIDER", "fluxer").lower()
 oauth = OAuth()
+BOT_PROCESS = None
 
 if OAUTH_PROVIDER == "fluxer":
     # Fluxer requires these env vars to be set by the deployer
@@ -112,6 +115,59 @@ def ensure_data_file():
         save_data({"guilds": {}, "rules": []})
 
 
+@app.on_event("startup")
+def start_bot_with_backend():
+    global BOT_PROCESS
+
+    run_bot = os.getenv("RUN_BOT_WITH_BACKEND", "false").lower() == "true"
+    if not run_bot:
+        return
+
+    worker_id = os.getenv("GUNICORN_WORKER_ID")
+    if worker_id and worker_id != "1":
+        print(f"[BOT] Skipping bot startup in worker {worker_id}")
+        return
+
+    bot_entry = pathlib.Path(
+        os.getenv("BOT_ENTRYPOINT") or str(ROOT / "bot" / "bot.py")
+    ).resolve()
+
+    if not bot_entry.exists():
+        print(f"[BOT] Bot entrypoint not found: {bot_entry}")
+        return
+
+    env = os.environ.copy()
+    if not env.get("TOKEN") and env.get("FLUXER_TOKEN"):
+        env["TOKEN"] = env["FLUXER_TOKEN"]
+
+    try:
+        BOT_PROCESS = subprocess.Popen(
+            [sys.executable, str(bot_entry)],
+            cwd=str(bot_entry.parent),
+            env=env,
+        )
+        print(f"[BOT] Started bot process pid={BOT_PROCESS.pid}")
+    except Exception as e:
+        BOT_PROCESS = None
+        print(f"[BOT] Failed to start bot: {e}")
+
+
+@app.on_event("shutdown")
+def stop_bot_with_backend():
+    global BOT_PROCESS
+
+    if BOT_PROCESS is None:
+        return
+
+    if BOT_PROCESS.poll() is None:
+        BOT_PROCESS.terminate()
+        try:
+            BOT_PROCESS.wait(timeout=10)
+        except Exception:
+            BOT_PROCESS.kill()
+    BOT_PROCESS = None
+
+
 @app.get("/login")
 async def login(request: Request):
     redirect_uri = OAUTH_REDIRECT_URI
@@ -155,7 +211,7 @@ async def auth(request: Request):
         import httpx
         async with httpx.AsyncClient() as http_client:
             token_response = await http_client.post(
-                os.getenv("FLUXER_TOKEN_URL"),
+                os.getenv("FLUXER_TOKEN_URL"), #type: ignore
                 data={
                     "grant_type": "authorization_code",
                     "code": code,

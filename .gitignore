@@ -30,15 +30,15 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-bot/.venv/
 backend/.venv/
+backend/bot/.venv/
 
 # Environment variables (NEVER commit)
 .env
 .env.local
 .env.*.local
 backend/.env
-bot/.env
+backend/bot/.env
 
 # IDE
 .vscode/

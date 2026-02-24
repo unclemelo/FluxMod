@@ -262,7 +262,7 @@ def logout(request: Request):
     return {"detail": "logged out"}
 
 
-@app.get("/healthz")
+@app.api_route("/healthz", methods=["GET", "HEAD"])
 def healthz():
     return {"status": "ok"}
 

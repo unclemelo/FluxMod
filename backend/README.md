@@ -63,6 +63,23 @@ uvicorn api:app --reload --host 127.0.0.1 --port 8000
 
 Visit http://127.0.0.1:8000/docs for interactive API docs.
 
+## Run bot from backend process (optional)
+
+You can run the Fluxer bot in the same service as the backend.
+
+Set these environment variables:
+
+```env
+RUN_BOT_WITH_BACKEND=true
+FLUXER_TOKEN=your_bot_token_here
+# Optional override:
+# BOT_ENTRYPOINT=./bot/bot.py
+```
+
+Notes:
+- Install bot dependencies in the same environment as backend (`pip install -r bot/requirements.txt`).
+- Use a single backend worker when running bot in-process to avoid duplicate bot instances.
+
 ## Deployment (Render)
 
 This repository includes a Render blueprint at `render.yaml` (repo root).

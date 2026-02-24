@@ -24,17 +24,17 @@ Project Structure
 
 ```
 AutoMod/
-├── bot/                  # Fluxer bot (runs on server)
-│   ├── bot.py
-│   ├── cogs/            # Fluxer command groups
-│   ├── utils/           # Shared engine, models, manager
-│   ├── docs/            # Architecture docs
-│   ├── requirements.txt
-│   └── README.md
 ├── backend/             # FastAPI backend (runs on server)
 │   ├── api.py
 │   ├── .env            # OAuth & config
 │   ├── data.json       # JSON store (or swap for database)
+│   ├── bot/            # Fluxer bot (runs on server)
+│   │   ├── bot.py
+│   │   ├── cogs/       # Fluxer command groups
+│   │   ├── utils/      # Shared engine, models, manager
+│   │   ├── docs/       # Architecture docs
+│   │   ├── requirements.txt
+│   │   └── README.md
 │   ├── requirements.txt
 │   └── README.md
 ├── frontend/            # Web dashboard (self-hosted or cloud)
@@ -53,7 +53,7 @@ Run all three components locally for testing:
 
 **Terminal 1 — Bot:**
 ```bash
-cd bot
+cd backend/bot
 python -m venv .venv
 # Windows PowerShell
 .\.venv\Scripts\Activate.ps1
@@ -89,7 +89,7 @@ Deployment
 ### Bot (Ubuntu Server)
 
 ```bash
-cd bot
+cd backend/bot
 python3.10 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
@@ -98,7 +98,7 @@ pip install -r requirements.txt
 echo "FLUXER_TOKEN=your_token" > .env
 echo "BACKEND_API_URL=http://localhost:8000" >> .env
 
-# Run with systemd (see bot/README.md for full config)
+# Run with systemd (see backend/bot/README.md for full config)
 ```
 
 ### Backend (Ubuntu Server)
@@ -125,6 +125,25 @@ EOF
 # Run with gunicorn
 gunicorn -w 4 -b 0.0.0.0:8000 api:app
 ```
+
+### Run backend + bot together (single service)
+
+If you want one service to run both API and bot:
+
+```bash
+cd backend
+pip install -r requirements.txt
+pip install -r bot/requirements.txt
+```
+
+Set env vars:
+
+```env
+RUN_BOT_WITH_BACKEND=true
+FLUXER_TOKEN=your_bot_token_here
+```
+
+Use one worker to avoid multiple bot instances.
 
 See backend/README.md for nginx + systemd config.
 
@@ -161,16 +180,16 @@ Configuration
 -------------
 
 See individual component READMEs:
-- `bot/README.md` — Fluxer token, backend URL
+- `backend/bot/README.md` — Fluxer token, backend URL
 - `backend/README.md` — Fluxer OAuth, session secret, database setup
 - `frontend/README.md` — Backend API URL (configured at runtime)
 
 Development
 -----------
 
-- Modify rules: `bot/utils/automod_engine.py` and `backend/api.py`
-- Update models: `bot/utils/automod_models.py`
-- Add Fluxer commands: `bot/cogs/automod.py`
+- Modify rules: `backend/bot/utils/automod_engine.py` and `backend/api.py`
+- Update models: `backend/bot/utils/automod_models.py`
+- Add Fluxer commands: `backend/bot/cogs/automod.py`
 - Improve dashboard: `frontend/index.html`
 
 Run tests and linters before submitting PRs.

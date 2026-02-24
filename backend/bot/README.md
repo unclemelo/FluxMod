@@ -45,7 +45,7 @@ python bot.py
 
 ## Deployment (Ubuntu)
 
-1. Clone repo, navigate to `bot/` directory
+1. Clone repo, navigate to `backend/bot/` directory
 2. Create venv and install deps
 3. Configure `.env` with Fluxer token and backend URL
 4. Run with systemd service or pm2 supervisor
@@ -60,9 +60,9 @@ After=network.target
 [Service]
 Type=simple
 User=automod
-WorkingDirectory=/home/automod/AutoMod/bot
+WorkingDirectory=/home/automod/AutoMod/backend/bot
 Environment="PYTHONUNBUFFERED=1"
-ExecStart=/home/automod/AutoMod/bot/.venv/bin/python bot.py
+ExecStart=/home/automod/AutoMod/backend/bot/.venv/bin/python bot.py
 Restart=on-failure
 RestartSec=10
 

@@ -12,6 +12,7 @@ Static dashboard for managing AutoMod rules and settings. Hosted independently f
 ## Features
 
 - OAuth login (Fluxer)
+- Separate landing/login page and dashboard page
 - View guilds and rules
 - Create, update, delete rules
 - Simple, lightweight UI
@@ -19,8 +20,9 @@ Static dashboard for managing AutoMod rules and settings. Hosted independently f
 ## Setup
 
 1. Copy all files from this directory to your web host
-2. Update the backend URL in `index.html` or when prompted on first load
-3. Deploy (e.g. GitHub Pages, Netlify, or a static host)
+2. Open `index.html` (landing page), then log in to access `dashboard.html`
+3. Update the backend URL when prompted on first load
+4. Deploy (e.g. GitHub Pages, Netlify, or a static host)
 
 ## Configuration
 
@@ -32,7 +34,8 @@ The URL is stored in `localStorage` for convenience.
 
 ## Development
 
-- `public/index.html` — source entry page
+- `public/index.html` — landing/login page
+- `public/dashboard.html` — authenticated dashboard page
 - `public/JS/` — source JavaScript modules
 - `public/Styles/styles.css` — source stylesheet
 - `dist/` — generated build output (do not edit manually)

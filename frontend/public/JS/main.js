@@ -1,5 +1,5 @@
 import { apiCall, getBackendUrl } from "./api.js";
-import { showLoggedIn, showLoggedOut } from "./auth.js";
+import { showLoggedIn } from "./auth.js";
 import { getRulePayloadFromForm, renderGuilds } from "./dashboard.js";
 
 const backendUrl = getBackendUrl();
@@ -11,9 +11,7 @@ async function checkAuth() {
     const meResponse = await apiCall(backendUrl, "/api/me");
 
     if (meResponse.status === 401) {
-      showLoggedOut(backendUrl);
-      statusSection.innerHTML =
-        '<p class="muted">Not signed in — click login to continue.</p>';
+      window.location.href = "./index.html";
       return;
     }
 
@@ -23,7 +21,7 @@ async function checkAuth() {
 
     showLoggedIn(user, async () => {
       await apiCall(backendUrl, "/logout");
-      location.reload();
+      window.location.href = "./index.html";
     });
 
     renderGuilds(guilds);

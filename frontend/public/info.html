@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FluxMod • Info</title>
+    <link rel="stylesheet" href="./Styles/styles.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-content navbar">
+        <a class="brand" href="./index.html">FluxMod</a>
+
+        <nav class="nav-links" aria-label="Main navigation">
+          <a class="nav-link" href="./index.html">Home</a>
+          <a class="nav-link nav-dashboard" href="./dashboard.html">Dashboard</a>
+          <a class="nav-link active" href="./info.html">Info</a>
+          <a class="nav-link" href="./contributors.html">Contributors</a>
+        </nav>
+
+        <div id="auth-area"></div>
+      </div>
+    </header>
+
+    <main class="container">
+      <section class="page-card">
+        <h2>About FluxMod</h2>
+        <p class="muted">FluxMod is an AutoMod system with a bot, backend API, and web dashboard to manage moderation rules for your guilds.</p>
+      </section>
+
+      <section class="page-card">
+        <h3>Core Features</h3>
+        <ul class="page-list">
+          <li>Rule-based message moderation</li>
+          <li>Guild rule management from dashboard</li>
+          <li>OAuth login and session-based access</li>
+          <li>Real-time rule enforcement through the bot</li>
+        </ul>
+      </section>
+    </main>
+
+    <script type="module" src="./JS/nav-auth.js"></script>
+  </body>
+</html>

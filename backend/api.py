@@ -199,6 +199,14 @@ def healthz():
     return {"status": "ok"}
 
 
+@app.get("/api/public/stats")
+def public_stats():
+    """Return non-sensitive public stats for the landing page."""
+    data = load_data()
+    guild_count = len(data.get("guilds", {}))
+    return {"protected_guilds": guild_count}
+
+
 @app.get("/api/me")
 def get_user(user=Depends(require_user)):
     """Return current logged-in user."""

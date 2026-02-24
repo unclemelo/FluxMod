@@ -9,6 +9,7 @@ import pathlib
 import os
 import subprocess
 import sys
+import time
 from starlette.middleware.sessions import SessionMiddleware
 from authlib.integrations.starlette_client import OAuth
 from dotenv import load_dotenv
@@ -120,6 +121,7 @@ def start_bot_with_backend():
     global BOT_PROCESS
 
     run_bot = os.getenv("RUN_BOT_WITH_BACKEND", "false").lower() == "true"
+    print(f"[BOT] RUN_BOT_WITH_BACKEND={run_bot}")
     if not run_bot:
         return
 
@@ -140,13 +142,23 @@ def start_bot_with_backend():
     if not env.get("TOKEN") and env.get("FLUXER_TOKEN"):
         env["TOKEN"] = env["FLUXER_TOKEN"]
 
+    if not env.get("TOKEN"):
+        print("[BOT] FLUXER_TOKEN/TOKEN is missing; bot will not start")
+        return
+
+    print(f"[BOT] Using bot entrypoint: {bot_entry}")
+
     try:
         BOT_PROCESS = subprocess.Popen(
-            [sys.executable, str(bot_entry)],
+            [sys.executable, "-u", str(bot_entry)],
             cwd=str(bot_entry.parent),
             env=env,
         )
         print(f"[BOT] Started bot process pid={BOT_PROCESS.pid}")
+        time.sleep(2)
+        exit_code = BOT_PROCESS.poll()
+        if exit_code is not None:
+            print(f"[BOT] Bot exited immediately with code={exit_code}")
     except Exception as e:
         BOT_PROCESS = None
         print(f"[BOT] Failed to start bot: {e}")
@@ -253,6 +265,41 @@ def logout(request: Request):
 @app.get("/healthz")
 def healthz():
     return {"status": "ok"}
+
+
+@app.get("/api/bot/status")
+def bot_status():
+    run_bot = os.getenv("RUN_BOT_WITH_BACKEND", "false").lower() == "true"
+
+    if not run_bot:
+        return {
+            "enabled": False,
+            "running": False,
+            "detail": "RUN_BOT_WITH_BACKEND is false",
+        }
+
+    if BOT_PROCESS is None:
+        return {
+            "enabled": True,
+            "running": False,
+            "detail": "Bot process has not been started",
+        }
+
+    exit_code = BOT_PROCESS.poll()
+    if exit_code is None:
+        return {
+            "enabled": True,
+            "running": True,
+            "pid": BOT_PROCESS.pid,
+        }
+
+    return {
+        "enabled": True,
+        "running": False,
+        "pid": BOT_PROCESS.pid,
+        "exit_code": exit_code,
+        "detail": "Bot process exited",
+    }
 
 
 @app.get("/api/public/stats")

@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FluxMod • Dashboard</title>
     <link rel="stylesheet" href="./Styles/styles.css" />
+    <style>
+    .label{
+      color: azure;
+    }
+    .value{
+      color: rgb(97, 97, 187);
+    }
+    </style>
   </head>
   <body>
     <header>
@@ -42,9 +50,9 @@
             <select id="guild-select"></select>
           </label>
 
-          <label>Rule name <input id="rule-name" required /></label>
-          <label>Pattern <input id="rule-pattern" required /></label>
-          <label>Action <input id="rule-action" required /></label>
+          <label>Rule name <input id="rule-name" required value="Rule name"/></label>
+          <label>Pattern <input id="rule-pattern" required value="Pattern"/></label>
+          <label>Action <input id="rule-action" required value="Action"/></label>
           <label
             >Threshold
             <input id="rule-threshold" type="number" value="1" min="1" />

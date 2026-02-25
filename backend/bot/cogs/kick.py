@@ -1,13 +1,13 @@
 import fluxer
 from fluxer import Cog
-from fluxer.checks import has_permissions
+from fluxer.checks import has_permission
 
 class KickCog(Cog):
     def __init__(self, bot: fluxer.Bot):
         super().__init__(bot)
 
     @Cog.command(name="kick")
-    @has_permissions(fluxer.Permissions.KICK_MEMBERS)   
+    @has_permission(fluxer.Permissions.KICK_MEMBERS)   
     async def kick(self, ctx: fluxer.Message, reason: str = "No reason provided"):
         embed_usage = fluxer.Embed(
             title="Kick Command Usage",

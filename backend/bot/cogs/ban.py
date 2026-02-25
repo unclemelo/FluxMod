@@ -1,13 +1,13 @@
 import fluxer
 from fluxer import Cog
-from fluxer.checks import has_permissions
+from fluxer.checks import has_permission
 
 class BanCog(Cog):
     def __init__(self, bot: fluxer.Bot):
         super().__init__(bot)
 
     @Cog.command(name="ban")
-    @has_permissions(fluxer.Permissions.BAN_MEMBERS)
+    @has_permission(fluxer.Permissions.BAN_MEMBERS)
     async def ban(self, ctx: fluxer.Message, reason: str = "No reason provided"):
 
         embed_usage = fluxer.Embed(

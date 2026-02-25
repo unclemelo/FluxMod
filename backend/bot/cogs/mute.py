@@ -1,6 +1,6 @@
 import fluxer
 from fluxer import Cog
-from fluxer.checks import has_permissions
+from fluxer.checks import has_permission
 
 class MuteCog(Cog):
     def __init__(self, bot: fluxer.Bot):
@@ -8,7 +8,7 @@ class MuteCog(Cog):
 
 
     @Cog.command(name="mute")
-    @has_permissions(fluxer.Permissions.MODERATE_MEMBERS)
+    @has_permission(fluxer.Permissions.MODERATE_MEMBERS)
     async def mute(self, ctx: fluxer.Message, reason: str = "No reason provided", duration: int = 3600):
 
         embed_usage = fluxer.Embed(
@@ -53,7 +53,7 @@ class MuteCog(Cog):
             print(f"Error muting user: {e}")
 
     @Cog.command(name="unmute")
-    @has_permissions(fluxer.Permissions.MODERATE_MEMBERS)
+    @has_permission(fluxer.Permissions.MODERATE_MEMBERS)
     async def unmute(self, ctx: fluxer.Message):
 
         embed_usage = fluxer.Embed(

@@ -32,6 +32,8 @@ async def load_cogs():
     for filename in os.listdir(cogs_dir):
         if filename.endswith(".py"):
             name = filename[:-3]
+            if name == "automod":  # Skip automod cog for now since it's not fully ready
+                continue
             try:
                 await client.load_extension(f"cogs.{name}")
                 loaded.append(filename)

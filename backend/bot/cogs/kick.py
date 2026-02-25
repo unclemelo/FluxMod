@@ -8,7 +8,7 @@ class KickCog(Cog):
 
     @Cog.command(name="kick")
     @has_permission(fluxer.Permissions.KICK_MEMBERS)   
-    async def kick(self, ctx: fluxer.Message, reason: str = "No reason provided"):
+    async def kick(self, ctx: fluxer.Message):
         embed_usage = fluxer.Embed(
             title="Kick Command Usage",
             description="Usage: `!kick <user_id> [reason]`\nExample: `!kick 123456789012345678 Spamming`",
@@ -16,11 +16,16 @@ class KickCog(Cog):
         )
 
         split = ctx.content.split()
-        if len(split) != 3:
+        if len(split) < 2:
             await ctx.reply(embed=embed_usage)
             return
         
         user_id = split[1]
+
+        # Default reason
+        reason = "No reason provided"
+        if len(split) >= 3:
+            reason = split[2]
 
         if ctx.guild_id is None:
             await ctx.reply("This command can only be used in a server.")

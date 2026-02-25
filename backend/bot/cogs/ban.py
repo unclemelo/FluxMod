@@ -8,7 +8,7 @@ class BanCog(Cog):
 
     @Cog.command(name="ban")
     @has_permission(fluxer.Permissions.BAN_MEMBERS)
-    async def ban(self, ctx: fluxer.Message, reason: str = "No reason provided"):
+    async def ban(self, ctx: fluxer.Message):
 
         embed_usage = fluxer.Embed(
             title="Ban Command Usage",
@@ -17,11 +17,16 @@ class BanCog(Cog):
         )
 
         split = ctx.content.split()
-        if len(split) != 3:
+        if len(split) < 2:
             await ctx.reply(embed=embed_usage)
             return
         
         user_id = split[1]
+
+        # Default reason
+        reason = "No reason provided"
+        if len(split) >= 3:
+            reason = split[2]
 
         if ctx.guild_id is None:
             await ctx.reply("This command can only be used in a server.")

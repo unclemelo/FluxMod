@@ -14,7 +14,7 @@ class HelpCog(Cog):
                 "**Moderation Commands:**\n"
                 "`!ban <user_id> [reason]` - Ban a user from the server.\n"
                 "`!kick <user_id> [reason]` - Kick a user from the server.\n"
-                "`!mute <user_id> <duration> [reason]` - Mute a user for a specified duration.\n"
+                "`!mute <user_id> [reason] [duration_in_seconds]` - Mute a user for a specified duration.\n"
                 "`!unmute <user_id>` - Unmute a user.\n\n"
                 "**AutoMod Configuration Commands:**\n"
                 "`!automod enable` - Enable AutoMod in the server.\n"

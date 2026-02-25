@@ -1,6 +1,7 @@
 import fluxer
 from fluxer import Cog
 from fluxer.checks import has_permission
+from datetime import datetime, timedelta, timezone
 
 class MuteCog(Cog):
     def __init__(self, bot: fluxer.Bot):
@@ -9,94 +10,78 @@ class MuteCog(Cog):
 
     @Cog.command(name="mute")
     @has_permission(fluxer.Permissions.MODERATE_MEMBERS)
-    async def mute(self, ctx: fluxer.Message):
-
-        embed_usage = fluxer.Embed(
-            title="Mute Command Usage",
-            description="Usage: `!mute <user_id> [reason] [duration_in_seconds]`\nExample: `!mute 123456789012345678 Spamming 3600` (mutes for 1 hour)",
-            color=0xFF4500,
-        )
-
-        split = ctx.content.split()
-        if len(split) < 2:
-            await ctx.reply(embed=embed_usage)
-            return
-        
-        user_id = split[1]
-
-        # Default reason and duration
-        reason = "No reason provided"
-        duration = 3600  # Default to 1 hour
-
-        if len(split) >= 3:
-            reason = split[2]
-
-        if len(split) == 4:
-            try:
-                duration = int(split[3])
-            except ValueError:
-                await ctx.reply("Duration must be an integer representing seconds.\nUsage: `!mute <user_id> [reason] [duration_in_seconds]`")
-                return
-
+    async def mute(
+        self,
+        ctx: fluxer.Message,
+        user_id: int,
+        duration: int = 3600,
+        *,
+        reason: str = "No reason provided"
+    ):
         if ctx.guild_id is None:
             await ctx.reply("This command can only be used in a server.")
             return
+
         guild = await self.bot.fetch_guild(str(ctx.guild_id))
+        member = await guild.fetch_member(int(user_id))
+
+        hours, remainder = divmod(duration, 3600)
+        minutes, seconds = divmod(remainder, 60)
+
+        member = await guild.fetch_member(user_id)
+
+        # Create ISO 8601 timestamp
+        until_time = datetime.now(timezone.utc) + timedelta(seconds=duration)
+        until_iso = until_time.isoformat()
+
+        parts = []
+        if hours:
+            parts.append(f"{hours}h")
+        if minutes:
+            parts.append(f"{minutes}m")
+        if seconds or not parts:
+            parts.append(f"{seconds}s")
 
         try:
-            # Convert duration to readable format
-            hours, remainder = divmod(duration, 3600)
-            minutes, seconds = divmod(remainder, 60)
+            await member.timeout(until=until_iso, reason=reason, guild_id=int(ctx.guild_id))
 
-            parts = []
-            if hours:
-                parts.append(f"{hours}h")
-            if minutes:
-                parts.append(f"{minutes}m")
-            if seconds or not parts:
-                parts.append(f"{seconds}s")
-            await guild.timeout(int(user_id), duration=duration, reason=reason)  # Timeout for specified duration
-
-            embed_muted = fluxer.Embed(
+            embed = fluxer.Embed(
                 title="User Muted",
                 description=f"User with ID {user_id} has been muted for {' '.join(parts)}.\nReason: {reason}",
                 color=0xFF4500,
             )
-            await ctx.reply(embed=embed_muted)
-        except Exception as e:
+            await ctx.reply(embed=embed)
 
-            embed_error = fluxer.Embed(
-                title="Error Muting User",
-                description=f"Failed to mute user with ID {user_id}.\nPlease check with the bot owner for more details.",
-                color=0xFF0000,
-            )
-            await ctx.reply(embed=embed_error)
+        except Exception as e:
+            await ctx.reply("Failed to mute user.")
             print(f"Error muting user: {e}")
 
     @Cog.command(name="unmute")
     @has_permission(fluxer.Permissions.MODERATE_MEMBERS)
-    async def unmute(self, ctx: fluxer.Message):
-
-        embed_usage = fluxer.Embed(
-            title="Unmute Command Usage",
-            description="Usage: `!unmute <user_id>`\nExample: `!unmute 123456789012345678`",
-            color=0x32CD32,
-        )
-
-        split = ctx.content.split()
-        if len(split) != 2:
-            await ctx.reply(embed=embed_usage)
-            return
-        
-        user_id = split[1]
+    async def unmute(
+        self, 
+        ctx: fluxer.Message,
+        user_id: int,
+        *,
+        reason: str = "No reason provided"
+    ):
+        duration =0
 
         if ctx.guild_id is None:
             await ctx.reply("This command can only be used in a server.")
             return
+
         guild = await self.bot.fetch_guild(str(ctx.guild_id))
+        member = await guild.fetch_member(int(user_id))
+
+        member = await guild.fetch_member(user_id)
+
+        # Create ISO 8601 timestamp
+        until_time = datetime.now(timezone.utc) + timedelta(seconds=duration)
+        until_iso = until_time.isoformat()
 
         try:
-            await guild.timeout(int(user_id), duration=0)  # Remove timeout
+            await member.timeout(until=until_iso, reason=reason, guild_id=int(ctx.guild_id))
 
             embed_unmuted = fluxer.Embed(
                 title="User Unmuted",

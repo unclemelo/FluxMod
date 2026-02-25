@@ -16,7 +16,7 @@ class KickCog(Cog):
         )
 
         split = ctx.content.split()
-        if len(split) != 2:
+        if len(split) != 3:
             await ctx.reply(embed=embed_usage)
             return
         

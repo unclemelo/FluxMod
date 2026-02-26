@@ -58,6 +58,19 @@ oauth = OAuth()
 BOT_PROCESS = None
 BOT_METRICS: dict[str, int | None | str] = {"guild_count": None, "updated_at": None}
 
+
+def load_bot_metrics(data: dict) -> tuple[int | None, str | None]:
+    stored_metrics = data.get("bot_metrics")
+    if not isinstance(stored_metrics, dict):
+        return None, None
+
+    stored_guild_count = stored_metrics.get("guild_count")
+    stored_updated_at = stored_metrics.get("updated_at")
+
+    guild_count = stored_guild_count if isinstance(stored_guild_count, int) else None
+    updated_at = stored_updated_at if isinstance(stored_updated_at, str) else None
+    return guild_count, updated_at
+
 if OAUTH_PROVIDER == "fluxer":
     # Fluxer requires these env vars to be set by the deployer
     FLUXER_CLIENT_ID = os.getenv("FLUXER_CLIENT_ID")
@@ -103,6 +116,14 @@ class RuleCreate(BaseModel):
 
 class BotMetricsUpdate(BaseModel):
     guild_count: int = Field(..., ge=0)
+
+
+def validate_bot_token(request: Request) -> None:
+    expected_token = os.getenv("BOT_API_TOKEN")
+    provided_token = request.headers.get("x-bot-token")
+
+    if expected_token and provided_token != expected_token:
+        raise HTTPException(status_code=401, detail="invalid bot token")
 
 
 def load_data() -> dict:
@@ -312,7 +333,15 @@ def bot_status():
 def public_stats():
     """Return non-sensitive public stats for the landing page."""
     data = load_data()
+    stored_guild_count, stored_updated_at = load_bot_metrics(data)
     reported_guild_count = BOT_METRICS.get("guild_count")
+    reported_updated_at = BOT_METRICS.get("updated_at")
+
+    if not isinstance(reported_guild_count, int):
+        reported_guild_count = stored_guild_count
+
+    if not isinstance(reported_updated_at, str):
+        reported_updated_at = stored_updated_at
 
     if isinstance(reported_guild_count, int):
         guild_count = reported_guild_count
@@ -324,25 +353,49 @@ def public_stats():
     return {
         "protected_guilds": guild_count,
         "source": source,
-        "updated_at": BOT_METRICS.get("updated_at"),
+        "updated_at": reported_updated_at,
     }
 
 
 @app.post("/api/internal/bot/metrics")
 def update_bot_metrics(payload: BotMetricsUpdate, request: Request):
-    expected_token = os.getenv("BOT_API_TOKEN")
-    provided_token = request.headers.get("x-bot-token")
+    validate_bot_token(request)
 
-    if expected_token and provided_token != expected_token:
-        raise HTTPException(status_code=401, detail="invalid bot token")
-
+    updated_at = datetime.now(timezone.utc).isoformat()
     BOT_METRICS["guild_count"] = payload.guild_count
-    BOT_METRICS["updated_at"] = datetime.now(timezone.utc).isoformat()
+    BOT_METRICS["updated_at"] = updated_at
+
+    data = load_data()
+    data["bot_metrics"] = {
+        "guild_count": payload.guild_count,
+        "updated_at": updated_at,
+    }
+    save_data(data)
+    print(f"[BOT_METRICS] Updated guild_count={payload.guild_count} at {updated_at}")
 
     return {
         "ok": True,
         "guild_count": BOT_METRICS["guild_count"],
         "updated_at": BOT_METRICS["updated_at"],
+    }
+
+
+@app.get("/api/internal/bot/metrics")
+def get_bot_metrics(request: Request):
+    validate_bot_token(request)
+
+    data = load_data()
+    stored_guild_count, stored_updated_at = load_bot_metrics(data)
+
+    return {
+        "memory": {
+            "guild_count": BOT_METRICS.get("guild_count"),
+            "updated_at": BOT_METRICS.get("updated_at"),
+        },
+        "stored": {
+            "guild_count": stored_guild_count,
+            "updated_at": stored_updated_at,
+        },
     }
 
 

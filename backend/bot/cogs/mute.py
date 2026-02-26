@@ -1,3 +1,5 @@
+import asyncio
+
 import fluxer
 from fluxer import Cog
 from fluxer.checks import has_permission
@@ -72,6 +74,17 @@ class MuteCog(Cog):
                 color=0xFF4500,
             )
             await ctx.reply(embed=embed)
+
+             # Schedule unmute after duration
+            async def unmute_after_delay():
+                await asyncio.sleep(duration)
+                try:
+                    await member_in_guild.remove_role(role_id=MUTE_ROLE_ID, guild_id=int(ctx.guild_id), reason="Mute duration expired")
+                except Exception as e:
+                    print(f"Error auto-unmuting user: {e}")
+
+            # Start the unmute task
+            asyncio.create_task(unmute_after_delay())
 
         except Exception as e:
             await ctx.reply("Failed to mute user.")

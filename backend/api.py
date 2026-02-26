@@ -13,6 +13,7 @@ import time
 from starlette.middleware.sessions import SessionMiddleware
 from authlib.integrations.starlette_client import OAuth
 from dotenv import load_dotenv
+from datetime import datetime, timezone
 
 ROOT = pathlib.Path(__file__).parent
 DATA_FILE = ROOT / "data.json"
@@ -55,6 +56,7 @@ app.add_middleware(
 OAUTH_PROVIDER = os.getenv("OAUTH_PROVIDER", "fluxer").lower()
 oauth = OAuth()
 BOT_PROCESS = None
+BOT_METRICS = {"guild_count": None, "updated_at": None}
 
 if OAUTH_PROVIDER == "fluxer":
     # Fluxer requires these env vars to be set by the deployer
@@ -97,6 +99,10 @@ class RuleCreate(BaseModel):
     action: str
     threshold: int = Field(1, ge=1)
     enabled: bool = True
+
+
+class BotMetricsUpdate(BaseModel):
+    guild_count: int = Field(..., ge=0)
 
 
 def load_data() -> dict:
@@ -306,8 +312,38 @@ def bot_status():
 def public_stats():
     """Return non-sensitive public stats for the landing page."""
     data = load_data()
-    guild_count = len(data.get("guilds", {}))
-    return {"protected_guilds": guild_count}
+    reported_guild_count = BOT_METRICS.get("guild_count")
+
+    if isinstance(reported_guild_count, int):
+        guild_count = reported_guild_count
+        source = "bot"
+    else:
+        guild_count = len(data.get("guilds", {}))
+        source = "stored"
+
+    return {
+        "protected_guilds": guild_count,
+        "source": source,
+        "updated_at": BOT_METRICS.get("updated_at"),
+    }
+
+
+@app.post("/api/internal/bot/metrics")
+def update_bot_metrics(payload: BotMetricsUpdate, request: Request):
+    expected_token = os.getenv("BOT_API_TOKEN")
+    provided_token = request.headers.get("x-bot-token")
+
+    if expected_token and provided_token != expected_token:
+        raise HTTPException(status_code=401, detail="invalid bot token")
+
+    BOT_METRICS["guild_count"] = payload.guild_count
+    BOT_METRICS["updated_at"] = datetime.now(timezone.utc).isoformat()
+
+    return {
+        "ok": True,
+        "guild_count": BOT_METRICS["guild_count"],
+        "updated_at": BOT_METRICS["updated_at"],
+    }
 
 
 @app.get("/api/me")

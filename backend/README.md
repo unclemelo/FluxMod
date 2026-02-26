@@ -72,6 +72,9 @@ Set these environment variables:
 ```env
 RUN_BOT_WITH_BACKEND=true
 FLUXER_TOKEN=your_bot_token_here
+API_BASE_URL=http://127.0.0.1:8000
+# Optional but recommended when API is reachable publicly:
+# BOT_API_TOKEN=shared_secret_between_bot_and_api
 # Optional override:
 # BOT_ENTRYPOINT=./bot/bot.py
 ```
@@ -79,6 +82,7 @@ FLUXER_TOKEN=your_bot_token_here
 Notes:
 - Install bot dependencies in the same environment as backend (`pip install -r bot/requirements.txt`).
 - Use a single backend worker when running bot in-process to avoid duplicate bot instances.
+- The bot reports live guild count to `POST /api/internal/bot/metrics`, and `GET /api/public/stats` prefers that live value when available.
 
 ## Deployment (Render)
 

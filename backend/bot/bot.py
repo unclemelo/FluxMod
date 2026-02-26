@@ -2,6 +2,10 @@ import fluxer
 import os
 import asyncio
 import pathlib
+import json
+import urllib.request
+import urllib.error
+from typing import Optional
 
 from utils.log import log
 from dotenv import load_dotenv
@@ -10,17 +14,77 @@ from dotenv import load_dotenv
 load_dotenv()
 raw_token = os.getenv("TOKEN") or os.getenv("FLUXER_TOKEN")
 TOKEN = raw_token.strip() if raw_token else None
+API_BASE_URL = (
+    os.getenv("API_BASE_URL")
+    or os.getenv("BACKEND_URL")
+    or ""
+).strip().rstrip("/")
+BOT_API_TOKEN = (os.getenv("BOT_API_TOKEN") or "").strip()
 BOT_ROOT = pathlib.Path(__file__).parent
 
 intents = fluxer.Intents.default()
-intents.message_content = True
 
 client = fluxer.Bot(intents=intents, command_prefix="!", retry_forever=True)
+
+
+def _metrics_url() -> Optional[str]:
+    if not API_BASE_URL:
+        return None
+    return f"{API_BASE_URL}/api/internal/bot/metrics"
+
+
+async def report_guild_count_to_api() -> None:
+    url = _metrics_url()
+    if not url:
+        return
+
+    guild_count = len(client.guilds)
+    payload = json.dumps({"guild_count": guild_count}).encode("utf-8")
+    headers = {"Content-Type": "application/json"}
+    if BOT_API_TOKEN:
+        headers["X-Bot-Token"] = BOT_API_TOKEN
+
+    def send_request() -> int:
+        request = urllib.request.Request(
+            url,
+            data=payload,
+            headers=headers,
+            method="POST",
+        )
+        with urllib.request.urlopen(request, timeout=8) as response:
+            response.read()
+            return response.status
+
+    try:
+        status = await asyncio.to_thread(send_request)
+        log(f"Reported guild count={guild_count} to API (status={status})", "info")
+    except urllib.error.HTTPError as error:
+        log(f"Guild count report rejected by API (HTTP {error.code})", "warn")
+    except Exception as error:
+        log(f"Failed to report guild count to API: {error}", "warn")
 
 
 @client.event
 async def on_ready():
     log(f"System online as {client.user} ({client.user.id})", "success")
+    log(f"Connected to {len(client.guilds)} guilds.", "info")
+    if not API_BASE_URL:
+        log("API_BASE_URL/BACKEND_URL is not set; skipping guild count reporting.", "warn")
+        return
+    await report_guild_count_to_api()
+
+
+@client.event
+async def on_guild_join(guild):
+    log(f"Joined guild: {getattr(guild, 'name', 'unknown')} ({guild})", "info")
+    await report_guild_count_to_api()
+
+
+
+@client.event
+async def on_guild_remove(guild):
+    log(f"Removed from guild: {getattr(guild, 'name', 'unknown')} ({guild})", "warn")
+    await report_guild_count_to_api()
 
 
 async def load_cogs():

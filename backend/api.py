@@ -56,7 +56,7 @@ app.add_middleware(
 OAUTH_PROVIDER = os.getenv("OAUTH_PROVIDER", "fluxer").lower()
 oauth = OAuth()
 BOT_PROCESS = None
-BOT_METRICS = {"guild_count": None, "updated_at": None}
+BOT_METRICS: dict[str, int | None | str] = {"guild_count": None, "updated_at": None}
 
 if OAUTH_PROVIDER == "fluxer":
     # Fluxer requires these env vars to be set by the deployer

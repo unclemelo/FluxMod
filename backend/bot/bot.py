@@ -75,16 +75,14 @@ async def on_ready():
 
 
 @client.event
-async def on_guild_join(ctx):
-    guild = await client.fetch_guild(str(ctx.guild_id))
+async def on_guild_join(guild):
     log(f"Joined guild: {getattr(guild, 'name', 'unknown')} ({guild})", "info")
     await report_guild_count_to_api()
 
 
 
 @client.event
-async def on_guild_remove(ctx):
-    guild = await client.fetch_guild(str(ctx.guild_id))
+async def on_guild_remove(guild):
     log(f"Removed from guild: {getattr(guild, 'name', 'unknown')} ({guild})", "warn")
     await report_guild_count_to_api()
 

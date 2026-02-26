@@ -1,11 +1,33 @@
 import fluxer
 from fluxer import Cog
 from fluxer.checks import has_permission
-from datetime import datetime, timedelta, timezone
+from typing import Any
+
+MUTE_ROLE_ID = 1476584004083720339 # FluxMod Muted Role Only Supported in the current implementation. Ensure this role exists in your server and has the appropriate permissions to restrict sending messages, adding reactions, etc. Adjust the role ID as needed for your server's configuration.
 
 class MuteCog(Cog):
     def __init__(self, bot: fluxer.Bot):
         super().__init__(bot)
+
+    def _resolve_user_id(self, member: Any) -> int | None:
+        if isinstance(member, fluxer.GuildMember):
+            return member.user.id
+
+        if isinstance(member, int):
+            return member
+
+        if isinstance(member, str):
+            value = member.strip()
+
+            if value.startswith("<@") and value.endswith(">"):
+                value = value[2:-1].replace("!", "")
+
+            if value.isdigit():
+                return int(value)
+
+        return None
+
+    # FIXME: Replace with a temp role-based mute system for better reliability and to support older Fluxer API versions. The current timeout-based implementation may not work correctly in all cases, especially if the bot restarts while a user is muted. A role-based system would allow for persistent mutes that survive bot restarts and provide more control over mute durations and permissions.
 
 
     @Cog.command(name="mute")
@@ -13,7 +35,7 @@ class MuteCog(Cog):
     async def mute(
         self,
         ctx: fluxer.Message,
-        user_id: int,
+        member: Any,
         duration: int = 3600,
         *,
         reason: str = "No reason provided"
@@ -22,17 +44,16 @@ class MuteCog(Cog):
             await ctx.reply("This command can only be used in a server.")
             return
 
+        user_id = self._resolve_user_id(member)
+        if user_id is None:
+            await ctx.reply("Invalid user. Use a mention or user ID.")
+            return
+
         guild = await self.bot.fetch_guild(str(ctx.guild_id))
-        member = await guild.fetch_member(int(user_id))
+        member_in_guild = await guild.fetch_member(user_id=user_id)
 
         hours, remainder = divmod(duration, 3600)
         minutes, seconds = divmod(remainder, 60)
-
-        member = await guild.fetch_member(user_id)
-
-        # Create ISO 8601 timestamp
-        until_time = datetime.now(timezone.utc) + timedelta(seconds=duration)
-        until_iso = until_time.isoformat()
 
         parts = []
         if hours:
@@ -43,7 +64,7 @@ class MuteCog(Cog):
             parts.append(f"{seconds}s")
 
         try:
-            await member.timeout(until=until_iso, reason=reason, guild_id=int(ctx.guild_id))
+            await member_in_guild.add_role(role_id=MUTE_ROLE_ID, guild_id=int(ctx.guild_id), reason=reason)
 
             embed = fluxer.Embed(
                 title="User Muted",
@@ -59,29 +80,27 @@ class MuteCog(Cog):
     @Cog.command(name="unmute")
     @has_permission(fluxer.Permissions.MODERATE_MEMBERS)
     async def unmute(
-        self, 
+        self,
         ctx: fluxer.Message,
-        user_id: int,
+        member: Any,
         *,
         reason: str = "No reason provided"
     ):
-        duration =0
 
         if ctx.guild_id is None:
             await ctx.reply("This command can only be used in a server.")
             return
 
+        user_id = self._resolve_user_id(member)
+        if user_id is None:
+            await ctx.reply("Invalid user. Use a mention or user ID.")
+            return
+
         guild = await self.bot.fetch_guild(str(ctx.guild_id))
-        member = await guild.fetch_member(int(user_id))
-
-        member = await guild.fetch_member(user_id)
-
-        # Create ISO 8601 timestamp
-        until_time = datetime.now(timezone.utc) + timedelta(seconds=duration)
-        until_iso = until_time.isoformat()
+        member_in_guild = await guild.fetch_member(user_id=user_id)
 
         try:
-            await member.timeout(until=until_iso, reason=reason, guild_id=int(ctx.guild_id))
+            await member_in_guild.remove_role(role_id=MUTE_ROLE_ID, guild_id=int(ctx.guild_id), reason=reason)
 
             embed_unmuted = fluxer.Embed(
                 title="User Unmuted",

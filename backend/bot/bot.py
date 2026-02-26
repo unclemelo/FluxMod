@@ -23,7 +23,6 @@ BOT_API_TOKEN = (os.getenv("BOT_API_TOKEN") or "").strip()
 BOT_ROOT = pathlib.Path(__file__).parent
 
 intents = fluxer.Intents.default()
-intents.message_content = True
 
 client = fluxer.Bot(intents=intents, command_prefix="!", retry_forever=True)
 
@@ -76,14 +75,17 @@ async def on_ready():
 
 
 @client.event
-async def on_guild_join(guild):
-    log(f"Joined guild: {getattr(guild, 'name', 'unknown')} ({client.guild_id})", "info")
+async def on_guild_join(ctx):
+    guild = await client.fetch_guild(str(ctx.guild_id))
+    log(f"Joined guild: {getattr(guild, 'name', 'unknown')} ({guild})", "info")
     await report_guild_count_to_api()
 
 
+
 @client.event
-async def on_guild_remove(guild):
-    log(f"Removed from guild: {getattr(guild, 'name', 'unknown')} ({client.guild_id})", "warn")
+async def on_guild_remove(ctx):
+    guild = await client.fetch_guild(str(ctx.guild_id))
+    log(f"Removed from guild: {getattr(guild, 'name', 'unknown')} ({guild})", "warn")
     await report_guild_count_to_api()
 
 

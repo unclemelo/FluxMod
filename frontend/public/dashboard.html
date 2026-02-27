@@ -5,14 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FluxMod • Dashboard</title>
     <link rel="stylesheet" href="./Styles/styles.css" />
-    <style>
-    .label{
-      color: azure;
-    }
-    .value{
-      color: rgb(97, 97, 187);
-    }
-    </style>
+    <link rel="stylesheet" href="./Styles/navbar.css" />
+    <link rel="stylesheet" href="./Styles/dashboard.css" />
   </head>
   <body>
     <header>
@@ -33,7 +27,19 @@
 
     <main class="container">
       <section class="warning-banner">
-        <p><strong>⚠️ Development Notice:</strong> You can log in, but sessions may not persist while the bot database and dashboard integration are being built. This is expected behavior during development.</p>
+        <div class="dev-meta">
+          <img src="./static-imgs/melo.png" alt="UncleMelo Profile Picture" class="dev-giving-notice-pfp"/>
+          <p class="dev-name"><strong>UncleMelo</strong></p>
+        </div>
+
+        <div class="warning-content">
+          <p class="warning-title">⚠️ Development Notice</p>
+          <p class="warning-text">
+            You can log in normally, but sessions may not persist while the bot database 
+            and dashboard integration are still under development. This is expected behavior 
+            during this phase.
+          </p>
+        </div>
       </section>
 
       <section id="status">

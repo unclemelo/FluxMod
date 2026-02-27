@@ -1,0 +1,134 @@
+.title-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+    margin-bottom: 28px;
+}
+
+.title-card .fluxmod-logo {
+    width: 120px;
+    height: auto;
+    border-radius: 50%;
+}
+
+.title-card h1 {
+    font-size: clamp(1.8rem, 6vw, 3.2rem);
+    margin: 0;
+}
+
+.title-card .title-desc {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.title-card .login-w-fluxer {
+    background: var(--accent-blue);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.title-card .login-w-fluxer:hover {
+    background: var(--accent-blue-hover);
+}
+
+.stat-card .hero-stat {
+    width: min(860px, 100%);
+    text-align: center;
+}
+.stat-card p {
+    margin: 0;
+    font-size: 1rem;
+}
+
+.warning-banner {
+    background: rgba(255, 165, 0, 0.1);
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.warning-banner .dev-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.warning-banner .warning-content {
+    width: 100%;
+}
+
+.dev-giving-notice-pfp {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.warning-banner .dev-name {
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+}
+
+.warning-banner strong {
+    color: var(--text);
+}
+
+.warning-banner .warning-title {
+    font-weight: 700;
+    color: var(--text);
+}
+
+.warning-banner .warning-text {
+    color: var(--text);
+}
+
+.landing-main {
+  min-height: calc(100vh - 72px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.stat-card {
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+.stat-card .stat-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.stat-card .stat-label {
+  font-weight: 600;
+  color: var(--text);
+}
+.stat-card .stat-value {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.page-card {
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}

@@ -1,0 +1,31 @@
+main.container {
+  padding-top: 24px;
+  padding-bottom: 28px;
+}
+
+.landing-main {
+  min-height: calc(100vh - 72px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-stat {
+  width: min(860px, 100%);
+  text-align: center;
+}
+
+.page-card {
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 760px) {
+  .landing-main {
+    min-height: calc(100vh - 64px);
+  }
+}

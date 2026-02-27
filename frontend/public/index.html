@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FluxMod • Landing</title>
     <link rel="stylesheet" href="./Styles/styles.css" />
+    <link rel="stylesheet" href="./Styles/navbar.css" />
+    <link rel="stylesheet" href="./Styles/landing.css">
   </head>
   <body>
     <header>
@@ -19,20 +21,44 @@
           <a class="nav-link" target="_blank" rel="noopener noreferrer" href="https://fluxer.gg/AvLlZRNA"><i class="fa-solid fa-link"></i> FluxMod Support</a>
         </nav>
 
-        <div id="auth-area"></div>
+        <div class="login" id="auth-area"></div>
       </div>
     </header>
 
+
+
     <main class="container landing-main">
-      <section class="stat-card hero-stat">
-        <p><strong>Protected Guilds</strong> <span id="protected-guilds-count">...</span></p>
-      </section>
-
       <section class="warning-banner">
-        <p><strong>⚠️ Development Notice:</strong> You can log in, but sessions may not persist while the bot database and dashboard integration are being built. This is expected behavior during development.</p>
+        <div class="dev-meta">
+          <img src="./static-imgs/melo.png" alt="UncleMelo Profile Picture" class="dev-giving-notice-pfp"/>
+          <p class="dev-name"><strong>UncleMelo</strong></p>
+        </div>
+
+        <div class="warning-content">
+          <p class="warning-title">⚠️ Development Notice</p>
+          <p class="warning-text">
+            You can log in normally, but sessions may not persist while the bot database 
+            and dashboard integration are still under development. This is expected behavior 
+            during this phase.
+          </p>
+        </div>
       </section>
 
-      <section id="status">
+      <section class="title-card">
+        <img class="fluxmod-logo" src="./static-imgs/fluxmod.png" alt="FluxMod Logo">
+        <h1>FluxMod / Dashboard</h1>
+        <p class="title-desc">Your all-in-one AutoMod solution for Fluxer guilds.</p>
+        <button class="login-w-fluxer" id="login"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login with Fluxer</button>
+      </section>
+
+      <section class="stat-card hero-stat">
+        <div class="stat-content">
+          <span class="stat-label">Protected Servers</span>
+          <span class="stat-value" id="protected-guilds-count">—</span>
+        </div>
+      </section>
+
+      <section id="status" style="display: none">
         <p class="muted">Checking authentication...</p>
       </section>
     </main>

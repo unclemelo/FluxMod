@@ -1,0 +1,21 @@
+main.container {
+  padding-top: 24px;
+  padding-bottom: 28px;
+}
+
+.page-card {
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+}
+
+.page-list {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.page-list li {
+  margin-bottom: 8px;
+}

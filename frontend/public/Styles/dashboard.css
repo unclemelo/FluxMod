@@ -1,0 +1,109 @@
+main.container {
+  padding-top: 24px;
+  padding-bottom: 28px;
+}
+
+.warning-banner {
+    background: rgba(255, 165, 0, 0.1);
+    border: 1px solid rgba(255, 165, 0, 0.3);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.warning-banner .dev-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.warning-banner .warning-content {
+    width: 100%;
+}
+
+.dev-giving-notice-pfp {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+.warning-banner .dev-name {
+    font-weight: 600;
+    color: var(--text);
+    margin: 0;
+}
+
+.warning-banner strong {
+    color: var(--text);
+}
+
+.warning-banner .warning-title {
+    font-weight: 700;
+    color: var(--text);
+}
+
+.warning-banner .warning-text {
+    color: var(--text);
+}
+
+#dashboard {
+  display: grid;
+  gap: 14px;
+}
+
+#guilds,
+#raw,
+#create-rule-form,
+#status {
+  background: rgba(148, 163, 184, 0.08);
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+#create-rule-form {
+  display: grid;
+  gap: 10px;
+}
+
+#create-rule-form label {
+  display: grid;
+  gap: 6px;
+  font-size: 0.95rem;
+}
+
+#create-rule-form input,
+#create-rule-form select,
+#create-rule-form button {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  padding: 10px 12px;
+  font: inherit;
+}
+
+#create-rule-form input,
+#create-rule-form select {
+  background: rgba(15, 23, 42, 0.35);
+  color: var(--text);
+}
+
+#create-rule-form button {
+  background: var(--accent-blue);
+  color: #fff;
+  border: none;
+  cursor: pointer;
+}
+
+#create-rule-form button:hover {
+  background: var(--accent-blue-hover);
+}
+
+#raw {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-break: break-word;
+}

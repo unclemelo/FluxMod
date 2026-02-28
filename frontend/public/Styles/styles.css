@@ -27,7 +27,8 @@
 }
 
 body { 
-  z-index: -999;
+    position: relative;
+    z-index: 0;
     height: 100vh;
     color: var(--text);
     overflow: hidden;
@@ -39,6 +40,8 @@ body {
 body::before {
     content: "";
     position: absolute;
+  z-index: -1;
+  pointer-events: none;
     width: 200%;
     height: 200%;
     background-image:

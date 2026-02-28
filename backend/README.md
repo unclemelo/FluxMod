@@ -50,7 +50,7 @@ For production (HTTPS + cross-site frontend), use:
 ENVIRONMENT=production
 SESSION_SAME_SITE=none
 SESSION_HTTPS_ONLY=true
-FRONTEND_URL=https://fluxmod.netlify.app
+FRONTEND_URL=https://fluxmod-frontend.onrender.com/
 ```
 SESSION_HTTPS_ONLY=true
 ```
@@ -59,6 +59,12 @@ Start the server:
 
 ```bash
 uvicorn api:app --reload --host 127.0.0.1 --port 8000
+```
+
+Or start the new Flask-based API 2.0:
+
+```bash
+python apitwoo.py
 ```
 
 Visit http://127.0.0.1:8000/docs for interactive API docs.
@@ -120,8 +126,8 @@ ENVIRONMENT=production
 SESSION_SAME_SITE=none
 SESSION_HTTPS_ONLY=true
 OAUTH_REDIRECT_URI=https://<your-render-service>.onrender.com/auth
-FRONTEND_URL=https://fluxmod.netlify.app
-ALLOWED_ORIGINS=https://fluxmod.netlify.app,https://fluxmod-frontend.onrender.com
+FRONTEND_URL=https://fluxmod-frontend.onrender.com/
+ALLOWED_ORIGINS=https://fluxmod-frontend.onrender.com/
 ```
 
 After deploy, update your Fluxer OAuth app callback URL to match `OAUTH_REDIRECT_URI`.

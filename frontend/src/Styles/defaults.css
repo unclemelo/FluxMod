@@ -17,10 +17,6 @@
 }
 
 * {
-  box-sizing: border-box;
-}
-
-* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -36,36 +32,23 @@ body {
     background: radial-gradient(circle at center, #0a0f1f 0%, #050510 70%);
 }
 
-/* Animated grid layer */
 body::before {
     content: "";
-    position: absolute;
-  z-index: -1;
-  pointer-events: none;
-    width: 200%;
-    height: 200%;
+    position: fixed;   /* Locks to viewport */
+    inset: 0;          /* Top:0 Right:0 Bottom:0 Left:0 */
+    z-index: -1;
+    pointer-events: none;
+
     background-image:
         linear-gradient(rgba(0, 245, 255, 0.15) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 245, 255, 0.15) 1px, transparent 1px);
     background-size: 60px 60px;
-    animation: moveGrid 20s linear infinite;
+
+    animation: moveGrid 3s linear infinite;
+    will-change: background-position;
 }
 
-/* Grid animation */
 @keyframes moveGrid {
-    from { transform: translate(0, 0); }
-    to { transform: translate(-60px, -60px); }
+    from { background-position: 0 0; }
+    to   { background-position: -60px -60px; }
 }
-
-.container {
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 18px 14px 24px;
-  width: 100%;
-}
-
-.muted {
-  color: var(--text-muted);
-}
-
-

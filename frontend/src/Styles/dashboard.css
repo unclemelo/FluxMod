@@ -107,3 +107,74 @@ main.container {
   white-space: pre-wrap;
   word-break: break-word;
 }
+
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Dashboard layout */
+.dashboard {
+  display: flex;
+  height: 93%; /* Full viewport height */
+}
+
+/* Side panel styling */
+.Sidebar {
+  width: 250px;
+  background-color: #2c3e50;
+  color: #fff;
+  position: fixed; /* Keeps the side panel fixed on the left */
+  top: 7%; /* Adjust as needed for header height */
+  left: 0;
+  height: 93%;
+  padding: 20px;
+  transition: width 0.3s ease;
+}
+
+
+.Sidebar ul {
+  list-style-type: none;
+}
+
+.Sidebar li {
+  margin: 20px 0;
+}
+
+.Sidebar a {
+  text-decoration: none;
+  color: #ecf0f1;
+  font-size: 18px;
+  display: block;
+  padding: 10px 15px;
+  border-radius: 6px;
+}
+
+.Sidebar a:hover {
+  background-color: #34495e;
+}
+
+
+.main-content h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.main-content p {
+  font-size: 16px;
+}
+
+/* For small screens (optional: hide sidebar and make content full-width) */
+@media (max-width: 768px) {
+  .Sidebar {
+    width: 0;
+    display: none;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+}

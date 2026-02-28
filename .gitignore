@@ -63,5 +63,8 @@ logs/
 # Frontend (if using Node)
 node_modules/
 .parcel-cache/
+.vite/
+dist-react/
+frontend/dist-react/
 .next/
 out/

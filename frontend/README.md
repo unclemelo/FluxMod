@@ -1,6 +1,6 @@
 # FluxMod Frontend
 
-Static dashboard for managing AutoMod rules and settings. Hosted independently from the backend.
+React frontend (Vite) with route-based pages in `src/pages` and static assets in `public/`.
 
 ## Features
 
@@ -12,10 +12,10 @@ Static dashboard for managing AutoMod rules and settings. Hosted independently f
 
 ## Setup
 
-1. Copy all files from this directory to your web host
-2. Open `index.html` (landing page), then log in to access `dashboard.html`
-3. Update the backend URL when prompted on first load
-4. Deploy (e.g. GitHub Pages, Render, or a static host)
+1. Install dependencies: `npm install`
+2. Run locally: `npm run dev`
+3. Build for production: `npm run build`
+4. Serve built output from `dist/`
 
 ## Configuration
 
@@ -27,25 +27,30 @@ The URL is stored in `localStorage` for convenience.
 
 ## Development
 
-- `public/index.html` — landing/login page
-- `public/dashboard.html` — authenticated dashboard page
-- `public/JS/` — source JavaScript modules
-- `public/Styles/styles.css` — source stylesheet
-- `dist/` — generated build output (do not edit manually)
-- Uses Parcel for local development and production builds
-- Works in any modern browser
+- `src/pages/` — React JSX pages (`/`, `/dashboard`, `/info`, `/contributors`)
+- `src/components/` — shared React UI components
+- `public/` — static assets and legacy compatibility files
+- `dist/` — Vite production build output (do not edit manually)
+- `dist-legacy/` — optional Parcel legacy output
 
-### Local dev
+### Local dev (React)
 
 ```bash
 npm install
 npm run dev
 ```
 
-### Production build
+### Production build (React)
 
 ```bash
 npm run build
+```
+
+### Legacy pages (optional during migration)
+
+```bash
+npm run legacy:dev
+npm run legacy:build
 ```
 
 ## Deployment Options
@@ -67,7 +72,7 @@ npm run build
 
 ### Simple Static Host
 
-Upload `index.html` and any static assets to any static host (AWS S3, Azure Blob Storage, etc).
+Upload contents of `dist/` to any static host (AWS S3, Azure Blob Storage, etc).
 
 ## API Integration
 

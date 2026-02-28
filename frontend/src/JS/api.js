@@ -31,6 +31,32 @@ function resolveProductionBackend(origin) {
   return origin;
 }
 
+function isOnStatusPage() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return window.location.pathname.startsWith("/status");
+}
+
+export function redirectToStatus(code) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const normalized = Number.parseInt(code, 10);
+  const safeCode =
+    Number.isInteger(normalized) && normalized >= 100 && normalized <= 599
+      ? normalized
+      : 500;
+
+  if (isOnStatusPage()) {
+    return;
+  }
+
+  window.location.assign(`/status?code=${safeCode}`);
+}
+
 export function getBackendUrl() {
   // Priority: window.BACKEND_URL > scoped localStorage > legacy localStorage > environment defaults
   if (typeof window === "undefined") {
@@ -91,12 +117,20 @@ export function getBackendUrl() {
 }
 
 export async function apiCall(backendUrl, path, options = {}) {
-  const response = await fetch(`${backendUrl}${path}`, {
-    credentials: "include",
-    ...options,
-  });
+  let response;
 
-  if (!response.ok && response.status !== 401) {
+  try {
+    response = await fetch(`${backendUrl}${path}`, {
+      credentials: "include",
+      ...options,
+    });
+  } catch (error) {
+    redirectToStatus(503);
+    throw error;
+  }
+
+  if (!response.ok) {
+    redirectToStatus(response.status);
     const errorText = await response.text();
     throw new Error(`${response.status}: ${errorText}`);
   }

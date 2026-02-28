@@ -1,21 +1,68 @@
-main.container {
-  padding-top: 24px;
-  padding-bottom: 28px;
-}
+header {
+    text-align: center;
+    padding: 2rem 1rem;
+    border-bottom: 1px solid var(--border);
+  }
 
-.page-card {
-  background: rgba(148, 163, 184, 0.08);
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  border-radius: 12px;
-  padding: 14px 16px;
-  margin-bottom: 14px;
-}
+  header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: var(--accent);
+  }
 
-.page-list {
-  margin: 0;
-  padding-left: 20px;
-}
+  header p {
+    margin: 0.3rem 0 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
 
-.page-list li {
-  margin-bottom: 8px;
-}
+  main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 2rem;
+    min-height: 70vh;
+  }
+
+  .grid-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: flex-start;
+    padding: 1.5rem;
+    justify-content: center;
+  }
+
+  .contributor-card {
+    background: rgba(42,42,63,0.9);
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    min-width: 160px;
+    max-width: 220px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    font-family: 'Roboto Mono', monospace;
+  }
+
+  .contributor-card img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+
+  .contributor-name {
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .contributor-role {
+    font-size: 0.85rem;
+    color: var(--accent);
+  }

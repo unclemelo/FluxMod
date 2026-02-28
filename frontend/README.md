@@ -1,13 +1,6 @@
-# AutoMod Frontend
-
-[![Netlify Status](https://api.netlify.com/api/v1/badges/54357230-e98a-4ee1-890e-8fe059637adb/deploy-status)](https://app.netlify.com/projects/fluxmod/deploys)
+# FluxMod Frontend
 
 Static dashboard for managing AutoMod rules and settings. Hosted independently from the backend.
-
-## Deploy Status
-
-- Netlify project: https://app.netlify.com/projects/fluxmod/deploys
-- Badge above shows the latest production deploy state.
 
 ## Features
 
@@ -22,7 +15,7 @@ Static dashboard for managing AutoMod rules and settings. Hosted independently f
 1. Copy all files from this directory to your web host
 2. Open `index.html` (landing page), then log in to access `dashboard.html`
 3. Update the backend URL when prompted on first load
-4. Deploy (e.g. GitHub Pages, Netlify, or a static host)
+4. Deploy (e.g. GitHub Pages, Render, or a static host)
 
 ## Configuration
 
@@ -64,9 +57,9 @@ npm run build
 3. Point to `frontend/` directory
 4. Update backend URL when prompted
 
-### Netlify
+### Render
 
-1. Connect repo to Netlify
+1. Connect repo to Render
 2. Set base directory to `frontend/`
 3. Build command: `npm run build`
 4. Publish directory: `dist`

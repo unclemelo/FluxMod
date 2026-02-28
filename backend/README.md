@@ -1,6 +1,6 @@
 # AutoMod Backend API
 
-FastAPI-based REST API for AutoMod rule management with Fluxer OAuth authentication.
+Flask-based REST API for AutoMod rule management with Fluxer OAuth authentication.
 
 ## Endpoints
 
@@ -52,22 +52,14 @@ SESSION_SAME_SITE=none
 SESSION_HTTPS_ONLY=true
 FRONTEND_URL=https://fluxmod-frontend.onrender.com/
 ```
-SESSION_HTTPS_ONLY=true
-```
 
 Start the server:
 
 ```bash
-uvicorn api:app --reload --host 127.0.0.1 --port 8000
+python api.py
 ```
 
-Or start the new Flask-based API 2.0:
-
-```bash
-python apitwoo.py
-```
-
-Visit http://127.0.0.1:8000/docs for interactive API docs.
+Health check endpoint: `http://127.0.0.1:8000/healthz`
 
 ## Run bot from backend process (optional)
 
@@ -109,7 +101,7 @@ This repository includes a Render blueprint at `render.yaml` (repo root).
 
 - Root Directory: `backend`
 - Build Command: `pip install -r requirements.txt`
-- Start Command: `gunicorn -k uvicorn.workers.UvicornWorker api:app --bind 0.0.0.0:$PORT`
+- Start Command: `gunicorn api:app --bind 0.0.0.0:$PORT`
 
 Required environment values:
 
@@ -198,18 +190,10 @@ sudo systemctl start automod-backend
 
 ## CORS
 
-To allow requests from frontend hosted elsewhere, add to `api.py`:
+To allow requests from frontend hosted elsewhere, configure origins in `.env`:
 
-```python
-from fastapi.middleware.cors import CORSMiddleware
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["https://example.com"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+```env
+ALLOWED_ORIGINS=https://example.com
 ```
 
-Update `allow_origins` with your frontend domain.
+The Flask app uses `Flask-CORS` and combines `ALLOWED_ORIGINS` with localhost defaults.

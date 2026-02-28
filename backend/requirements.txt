@@ -1,5 +1,7 @@
 fastapi
 uvicorn[standard]
+flask
+flask-cors
 authlib
 python-dotenv
 itsdangerous
@@ -7,3 +9,4 @@ httpx
 gunicorn
 colorama
 fluxer.py
+requests

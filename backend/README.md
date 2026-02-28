@@ -121,6 +121,7 @@ SESSION_SAME_SITE=none
 SESSION_HTTPS_ONLY=true
 OAUTH_REDIRECT_URI=https://<your-render-service>.onrender.com/auth
 FRONTEND_URL=https://fluxmod.netlify.app
+ALLOWED_ORIGINS=https://fluxmod.netlify.app,https://fluxmod-frontend.onrender.com
 ```
 
 After deploy, update your Fluxer OAuth app callback URL to match `OAUTH_REDIRECT_URI`.

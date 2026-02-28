@@ -23,18 +23,6 @@ load_dotenv(dotenv_path=str(ROOT / ".env"))
 
 app = FastAPI(title="AutoMod Backend API")
 
-# Add CORS middleware to allow frontend requests
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",                      # Local dev
-        "https://fluxmod-frontend.onrender.com",      # Production frontend on Render
-    ],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
-
 # OAuth / session configuration
 SESSION_SECRET = os.getenv("SESSION_SECRET") or "melobytesarebestbytes"
 OAUTH_REDIRECT_URI = os.getenv("OAUTH_REDIRECT_URI") or "http://127.0.0.1:8000/auth"
@@ -42,6 +30,38 @@ IS_PRODUCTION = os.getenv("ENVIRONMENT") == "production"
 SESSION_SAME_SITE: Literal["lax", "strict", "none"] = os.getenv("SESSION_SAME_SITE", "none" if IS_PRODUCTION else "lax").lower() # type: ignore
 SESSION_HTTPS_ONLY = os.getenv("SESSION_HTTPS_ONLY", str(IS_PRODUCTION)).lower() == "true"
 FRONTEND_URL = os.getenv("FRONTEND_URL") or "http://localhost:3000"
+
+
+def build_allowed_origins() -> list[str]:
+    defaults = {
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://fluxmod-frontend.onrender.com",
+        "https://fluxmod.netlify.app",
+    }
+
+    if FRONTEND_URL:
+        defaults.add(FRONTEND_URL)
+
+    env_origins = os.getenv("ALLOWED_ORIGINS", "")
+    parsed_env_origins = {
+        origin.strip()
+        for origin in env_origins.split(",")
+        if origin.strip()
+    }
+
+    return sorted(defaults | parsed_env_origins)
+
+# Add CORS middleware to allow frontend requests
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=build_allowed_origins(),
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Add session middleware.
 # - Production cross-site OAuth requires SameSite=None + Secure cookies.

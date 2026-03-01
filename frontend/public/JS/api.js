@@ -31,6 +31,48 @@ function resolveProductionBackend(origin) {
   return origin;
 }
 
+function migrateLegacyProductionBackend(url, frontendOrigin) {
+  const normalized = normalizeBackendUrl(url);
+  if (!normalized) {
+    return null;
+  }
+
+  if (
+    frontendOrigin.includes("fluxmod-frontend.onrender.com") &&
+    normalized.includes("fluxmod.onrender.com")
+  ) {
+    return "https://fluxmod.onrender.com";
+  }
+
+  return normalized;
+}
+
+function isOnStatusPage() {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return window.location.pathname.startsWith("/status");
+}
+
+export function redirectToStatus(code) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const normalized = Number.parseInt(code, 10);
+  const safeCode =
+    Number.isInteger(normalized) && normalized >= 100 && normalized <= 599
+      ? normalized
+      : 500;
+
+  if (isOnStatusPage()) {
+    return;
+  }
+
+  window.location.assign(`/status?code=${safeCode}`);
+}
+
 export function getBackendUrl() {
   // Priority: window.BACKEND_URL > scoped localStorage > legacy localStorage > environment defaults
   if (typeof window === "undefined") {
@@ -47,8 +89,14 @@ export function getBackendUrl() {
     return configured;
   }
 
-  const scopedSaved = normalizeBackendUrl(localStorage.getItem(storageKey));
-  const legacySaved = normalizeBackendUrl(localStorage.getItem("backendUrl"));
+  const scopedSaved = migrateLegacyProductionBackend(
+    localStorage.getItem(storageKey),
+    origin
+  );
+  const legacySaved = migrateLegacyProductionBackend(
+    localStorage.getItem("backendUrl"),
+    origin
+  );
   const existing = scopedSaved || legacySaved;
 
   if (existing) {
@@ -76,7 +124,7 @@ export function getBackendUrl() {
 
   if (isLocalHost(hostname)) {
     const promptUrl = prompt(
-      "Enter backend URL (or press Cancel for http://localhost:8000):",
+      "Enter backend URL (or press Cancel for http://localhost:5000):",
       backendUrl
     );
     const prompted = normalizeBackendUrl(promptUrl);

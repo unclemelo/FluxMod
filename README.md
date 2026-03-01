@@ -1,5 +1,5 @@
 
-# FluxMod
+# FluxMod | [FluxMod Support Guild](https://fluxer.gg/AvLlZRNA)
 
 A modular Fluxer auto-moderation system with independent bot, backend API, and web dashboard.
 

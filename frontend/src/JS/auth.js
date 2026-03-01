@@ -26,9 +26,10 @@ export function showLoggedIn(user, onLogout) {
   const dashboardSection = document.getElementById("dashboard");
 
   setDashboardNavVisibility(true);
+  console.log("User authenticated:", user);
 
   const username = user.username || user.id || "User";
-  authArea.innerHTML = `<span class="user-info">${username}</span><button id="logout" class="auth-btn logout-btn">Logout</button>`;
+  authArea.innerHTML = `<span class="user-info">${user}</span><button id="logout" class="auth-btn logout-btn">Logout</button>`;
   document.getElementById("logout").onclick = onLogout;
 
   if (dashboardSection) {

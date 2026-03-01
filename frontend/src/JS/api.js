@@ -25,7 +25,7 @@ function resolveProductionBackend(origin) {
   }
 
   if (origin.includes("fluxmod-frontend.onrender.com")) {
-    return origin.replace("fluxmod-frontend", "fluxmod");
+    return "https://fluxmod.onrender.com";
   }
 
   return origin;
@@ -71,6 +71,13 @@ export function getBackendUrl() {
     localStorage.setItem(storageKey, configured);
     localStorage.setItem("backendUrl", configured);
     return configured;
+  }
+
+  const viteConfigured = normalizeBackendUrl(import.meta?.env?.VITE_BACKEND_URL);
+  if (viteConfigured) {
+    localStorage.setItem(storageKey, viteConfigured);
+    localStorage.setItem("backendUrl", viteConfigured);
+    return viteConfigured;
   }
 
   const scopedSaved = normalizeBackendUrl(localStorage.getItem(storageKey));

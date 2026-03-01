@@ -3,18 +3,16 @@ import React from "react"
 import "../Styles/dashboard.css";
 import "../Styles/defaults.css";
 
+export default function DashboardPage({ user }) {
+  const username = user?.username || user?.id || "User";
 
-const User = "TestUser001"; // Placeholder username
-
-export default function DashboardPage() {
   return (
     <section className="dashboard">
         <div className="Sidebar">
             <h1>Dashboard</h1>
             <nav>
                 <ul>
-                    <img className="sidebar-profile-picture" src="{userProfilePicture}" alt="{User}" />
-                    <h2 className="sidebar-welcome-header">Welcome, {User}</h2>
+                    <h2 className="sidebar-welcome-header">Welcome, {username}</h2>
 
                     <h2 className="sidebar-title">General</h2>
                     <li><a href="/dashboard/servers"><i className="fa-solid fa-server"></i> Servers</a></li>

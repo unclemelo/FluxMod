@@ -3,12 +3,20 @@ import "../Styles/navbar.css";
 
 const links = [
   { to: "/", label: "Home", end: true },
-  // { to: "/dashboard", label: "Dashboard", end: true },
   { to: "/info", label: "Info", end: true },
   { to: "/contributors", label: "Contributors", end: true },
 ];
 
-export default function AppLayout({ children }) {
+export default function AppLayout({
+  children,
+  isAuthenticated,
+  isAuthLoading,
+  user,
+  onLogin,
+  onLogout,
+}) {
+  const username = user?.username || user?.id || "User";
+
   return (
     <div className="app-shell">
       <header className="topbar">
@@ -30,7 +38,44 @@ export default function AppLayout({ children }) {
             </NavLink>
           ))}
 
-          <div className="login" id="auth-area"></div>
+          {isAuthenticated && (
+            <NavLink
+              to="/dashboard"
+              end
+              className={({ isActive }) =>
+                isActive ? "nav-link active" : "nav-link"
+              }
+            >
+              Dashboard
+            </NavLink>
+          )}
+
+          <div className="login" id="auth-area">
+            {isAuthLoading ? (
+              <span className="user-info">Checking session...</span>
+            ) : isAuthenticated ? (
+              <>
+                <span className="user-info">{username}</span>
+                <button
+                  type="button"
+                  id="logout"
+                  className="auth-btn logout-btn"
+                  onClick={onLogout}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                id="login"
+                className="auth-btn"
+                onClick={onLogin}
+              >
+                Login
+              </button>
+            )}
+          </div>
         </nav>
       </header>
 

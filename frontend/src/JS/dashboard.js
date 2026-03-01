@@ -1,4 +1,7 @@
+import { debugLog } from "./api.js";
+
 export function renderGuilds(guilds) {
+  debugLog("dashboard", "Rendering guild cards", { count: guilds?.length ?? 0 });
   const guildsContainer = document.getElementById("guilds");
   const guildSelect = document.getElementById("guild-select");
   const rawOutput = document.getElementById("raw");
@@ -22,7 +25,7 @@ export function renderGuilds(guilds) {
 }
 
 export function getRulePayloadFromForm() {
-  return {
+  const payload = {
     guildId: document.getElementById("guild-select").value,
     payload: {
       name: document.getElementById("rule-name").value,
@@ -32,4 +35,7 @@ export function getRulePayloadFromForm() {
       enabled: document.getElementById("rule-enabled").checked,
     },
   };
+
+  debugLog("dashboard", "Built rule payload from form", payload);
+  return payload;
 }

@@ -36,6 +36,7 @@ def _metrics_url() -> Optional[str]:
 async def report_guild_count_to_api() -> None:
     url = _metrics_url()
     if not url:
+        log("Skipping guild count report because API URL is empty", "debug")
         return
 
     guild_count = len(client.guilds)
@@ -43,6 +44,11 @@ async def report_guild_count_to_api() -> None:
     headers = {"Content-Type": "application/json"}
     if BOT_API_TOKEN:
         headers["X-Bot-Token"] = BOT_API_TOKEN
+
+    log(
+        f"Reporting guild metrics to API url={url} guild_count={guild_count}",
+        "debug",
+    )
 
     def send_request() -> int:
         request = urllib.request.Request(
@@ -92,6 +98,7 @@ async def load_cogs():
     failed = []
 
     cogs_dir = BOT_ROOT / "cogs"
+    log(f"Loading cogs from {cogs_dir}", "debug")
 
     for filename in os.listdir(cogs_dir):
         if filename.endswith(".py"):
@@ -114,6 +121,10 @@ async def load_cogs():
             log(f"   → {file}: {error}", "error")
 
 async def main():
+    log(
+        f"Bot startup context api_base_url={API_BASE_URL or 'unset'} token_present={bool(TOKEN)}",
+        "debug",
+    )
     try:
         await load_cogs()
     except Exception as e:

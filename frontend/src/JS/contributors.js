@@ -1,14 +1,20 @@
+import { debugLog } from "./api.js";
+
 const owner = "unclemelo";
 const repo = "FluxMod";
 const container = document.querySelector('.grid-container');
 const maintainers = ['unclemelo', 'hubot'];
 
 async function loadContributors() {
+  debugLog("contributors", "Loading contributors", { owner, repo });
   container.innerHTML = '';
   try {
     const res = await fetch(`https://api.github.com/repos/${owner}/${repo}/contributors`);
     if (!res.ok) throw new Error(`Contributors fetch failed: ${res.status}`);
     const contributors = await res.json();
+    debugLog("contributors", "Base contributor list loaded", {
+      count: contributors?.length ?? 0,
+    });
 
     // Fetch full profile for each contributor to get real name
     const profiles = await Promise.all(contributors.map(async c => {
@@ -40,7 +46,12 @@ async function loadContributors() {
       container.appendChild(card);
     });
 
+    debugLog("contributors", "Contributor cards rendered", {
+      count: profiles?.length ?? 0,
+    });
+
   } catch (err) {
+    debugLog("contributors", "Failed to load contributors", { err });
     console.error('Error loading contributors:', err);
     container.innerHTML = '<div style="color:var(--text-muted);">Unable to load contributors. Check console for details.</div>';
   }

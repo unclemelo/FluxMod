@@ -1,7 +1,11 @@
 import json
 from typing import Any
 
+from api2.debug import debug_kv, get_logger
 from api2.globals import DATA_FILE
+
+
+logger = get_logger("services.data_store")
 
 
 def default_data() -> dict[str, Any]:
@@ -14,19 +18,36 @@ def ensure_data_file() -> None:
     if not DATA_FILE.exists():
         DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
         save_data(default_data())
+        logger.info("Created missing data file at %s", DATA_FILE)
 
 
 def load_data() -> dict[str, Any]:
     """Load persisted backend data from disk."""
     if not DATA_FILE.exists():
+        debug_kv(logger, "Data file missing; returning default data", path=str(DATA_FILE))
         return default_data()
 
-    return json.loads(DATA_FILE.read_text(encoding="utf-8"))
+    loaded = json.loads(DATA_FILE.read_text(encoding="utf-8"))
+    debug_kv(
+        logger,
+        "Data file loaded",
+        path=str(DATA_FILE),
+        guild_count=len(loaded.get("guilds", {})) if isinstance(loaded, dict) else None,
+        rule_count=len(loaded.get("rules", [])) if isinstance(loaded, dict) else None,
+    )
+    return loaded
 
 
 def save_data(data: dict[str, Any]) -> None:
     """Persist backend data to disk in a readable format."""
     DATA_FILE.write_text(json.dumps(data, indent=2), encoding="utf-8")
+    debug_kv(
+        logger,
+        "Data file saved",
+        path=str(DATA_FILE),
+        guild_count=len(data.get("guilds", {})),
+        rule_count=len(data.get("rules", [])),
+    )
 
 
 def load_bot_metrics(data: dict[str, Any]) -> tuple[int | None, str | None]:

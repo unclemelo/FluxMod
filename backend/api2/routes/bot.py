@@ -5,18 +5,21 @@ from datetime import datetime, timezone
 
 from flask import Blueprint, jsonify, request
 
+from api2.debug import debug_kv, get_logger
 from api2.services.data_store import load_bot_metrics, load_data, save_data
 from api2.services.validators import validate_bot_token
 from api2.state import BOT_METRICS, BOT_PROCESS
 
 
 bot_bp = Blueprint("bot", __name__)
+logger = get_logger("routes.bot")
 
 
 @bot_bp.get("/api/bot/status")
 def bot_status():
     """Report whether optional bot sidecar mode is enabled/running."""
     run_bot = os.getenv("RUN_BOT_WITH_BACKEND", "false").lower() == "true"
+    debug_kv(logger, "Bot status requested", run_bot=run_bot, has_process=BOT_PROCESS is not None)
 
     if not run_bot:
         return jsonify({
@@ -67,6 +70,14 @@ def public_stats():
         guild_count = len(data.get("guilds", {}))
         source = "stored"
 
+    debug_kv(
+        logger,
+        "Public stats calculated",
+        protected_guilds=guild_count,
+        source=source,
+        updated_at=reported_updated_at,
+    )
+
     return jsonify(
         {
             "protected_guilds": guild_count,
@@ -80,11 +91,13 @@ def public_stats():
 def update_bot_metrics():
     """Receive trusted metric updates from the bot process."""
     if not validate_bot_token(request):
+        logger.warning("Rejected bot metrics update due to invalid token")
         return jsonify({"detail": "invalid bot token"}), 401
 
     payload = request.get_json(silent=True) or {}
     guild_count = payload.get("guild_count")
     if not isinstance(guild_count, int) or guild_count < 0:
+        debug_kv(logger, "Invalid bot metrics payload", payload=payload)
         return jsonify({"detail": "guild_count must be an integer >= 0"}), 400
 
     updated_at = datetime.now(timezone.utc).isoformat()
@@ -94,6 +107,7 @@ def update_bot_metrics():
     data = load_data()
     data["bot_metrics"] = {"guild_count": guild_count, "updated_at": updated_at}
     save_data(data)
+    debug_kv(logger, "Bot metrics updated", guild_count=guild_count, updated_at=updated_at)
 
     return jsonify({"ok": True, "guild_count": guild_count, "updated_at": updated_at})
 
@@ -102,6 +116,7 @@ def update_bot_metrics():
 def get_bot_metrics():
     """Return in-memory and persisted metric snapshots for debugging."""
     if not validate_bot_token(request):
+        logger.warning("Rejected bot metrics read due to invalid token")
         return jsonify({"detail": "invalid bot token"}), 401
 
     data = load_data()

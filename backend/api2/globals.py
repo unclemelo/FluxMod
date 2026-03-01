@@ -3,6 +3,8 @@ import pathlib
 from typing import Literal
 from dotenv import load_dotenv
 
+from api2.debug import debug_kv, get_logger
+
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DATA_FILE = ROOT / "data.json"
@@ -20,6 +22,7 @@ SESSION_HTTPS_ONLY = os.getenv("SESSION_HTTPS_ONLY", str(IS_PRODUCTION)).lower()
 FRONTEND_URL = os.getenv("FRONTEND_URL") or "http://localhost:3000"
 OAUTH_PROVIDER = os.getenv("OAUTH_PROVIDER", "fluxer").lower()
 FLUXER_SCOPE = os.getenv("FLUXER_SCOPE", "identify guilds")
+logger = get_logger("globals")
 
 def build_allowed_origins() -> list[str]:
     defaults = {
@@ -40,4 +43,11 @@ def build_allowed_origins() -> list[str]:
         if origin.strip()
     }
 
-    return sorted(defaults | parsed_env_origins)
+    origins = sorted(defaults | parsed_env_origins)
+    debug_kv(
+        logger,
+        "Allowed origins resolved",
+        frontend_url=FRONTEND_URL,
+        count=len(origins),
+    )
+    return origins
